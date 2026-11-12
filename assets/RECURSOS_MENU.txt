@@ -1,0 +1,10 @@
+Recursos usados en el menu de El Inquieto
+
+Ultimate Space Kit - Quaternius: astronauta y modelos espaciales. Licencia CC0.
+https://quaternius.com/packs/ultimatespacekit.html
+
+Modular Sci-Fi MegaKit - Quaternius: criatura y plataforma. Licencia CC0.
+https://quaternius.com/packs/modularscifimegakit.html
+
+Skyboxes Space - Kenney: fondo de nebulosa. Licencia CC0.
+https://kenney.nl/assets/skyboxes-space

@@ -5,11 +5,17 @@
 [ext_resource type="PackedScene" uid="uid://cxhhy6ma1ijnx" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/target-large.glb" id="2_w6fns"]
 [ext_resource type="Texture2D" uid="uid://c1oybajh5tej8" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty.png" id="3_pkvd8"]
 [ext_resource type="PackedScene" uid="uid://byynkrxl5mi1b" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/blaster-b.glb" id="4_3r3h5"]
+[ext_resource type="FontFile" path="res://assets/fonts/CinzelDecorative-Regular.ttf" id="8_font"]
+[ext_resource type="Texture2D" path="res://assets/menu_gradient.svg" id="9_gradient"]
 [ext_resource type="Texture2D" uid="uid://btvb05dfk7ey6" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Normal.png" id="5_3r3h5"]
 [ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Hover.png" id="6_hover"]
 [ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="7_active"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r6318"]
+sky_top_color = Color(0.08, 0.16, 0.28, 1)
+sky_horizon_color = Color(0.31, 0.52, 0.59, 1)
+ground_bottom_color = Color(0.025, 0.055, 0.07, 1)
+ground_horizon_color = Color(0.12, 0.27, 0.23, 1)
 
 [sub_resource type="Sky" id="Sky_bm2sk"]
 sky_material = SubResource("ProceduralSkyMaterial_r6318")
@@ -58,64 +64,74 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055144727, 0.34694767, 1.1
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1431531116]
 transform = Transform3D(-0.08715446, -0.24100159, 0.9666035, 0, 0.97029567, 0.24192214, -0.99619484, 0.021084594, -0.084565595, 2.296908, 0.80061305, 1.5789564)
 
-[node name="MenuPanel" type="NinePatchRect" parent="." unique_id=1971913646]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -600.0
-offset_top = -285.0
-offset_right = -200.0
-offset_bottom = 285.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("3_pkvd8")
-patch_margin_left = 20
-patch_margin_top = 20
-patch_margin_right = 20
-patch_margin_bottom = 20
-
-[node name="MarginContainer" type="MarginContainer" parent="MenuPanel" unique_id=266365526]
+[node name="MenuPanel" type="Control" parent="." unique_id=1971913646]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+
+[node name="Shade" type="TextureRect" parent="MenuPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_gradient")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MenuPanel" unique_id=266365526]
+layout_mode = 1
+anchor_bottom = 1.0
+offset_right = 545.0
+theme_override_constants/margin_left = 58
+theme_override_constants/margin_top = 54
+theme_override_constants/margin_right = 38
+theme_override_constants/margin_bottom = 34
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer" unique_id=525443038]
 layout_mode = 2
-theme_override_constants/separation = 12
-alignment = 1
+theme_override_constants/separation = 8
+
+[node name="EmblemLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.78, 0.58, 1)
+theme_override_font_sizes/font_size = 27
+text = "✦"
 
 [node name="TitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=432695674]
 layout_mode = 2
-theme_override_font_sizes/font_size = 64
-text = "El Inquieto"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 47
+text = "EL INQUIETO"
 
 [node name="SubtitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.43, 0.89, 0.91, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.77, 0.82, 0.78, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 14
 text = "ASALTO ARCADE"
-horizontal_alignment = 1
 
 [node name="TaglineLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.91, 0.8, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.72, 0.76, 0.73, 1)
+theme_override_font_sizes/font_size = 13
 text = "SOBREVIVE A CADA OLEADA"
-horizontal_alignment = 1
+
+[node name="MenuSpacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(1, 78)
+layout_mode = 2
 
 [node name="PlayButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=191605186]
+custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("5_3r3h5")
-texture_hover = ExtResource("6_hover")
-texture_pressed = ExtResource("7_active")
+texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/PlayButton" unique_id=998601735]
 layout_mode = 1
@@ -124,16 +140,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 17
 text = "JUGAR"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ControlsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
+custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("5_3r3h5")
-texture_hover = ExtResource("6_hover")
-texture_pressed = ExtResource("7_active")
+texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/ControlsButton" unique_id=41628118]
 layout_mode = 1
@@ -142,17 +158,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.99744755, 1)
+theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 17
 text = "CONTROLES"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CreditsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("5_3r3h5")
-texture_hover = ExtResource("6_hover")
-texture_pressed = ExtResource("7_active")
+texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/CreditsButton"]
 layout_mode = 1
@@ -161,16 +176,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "CRÉDITOS"
+theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 17
+text = "CREDITOS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuitButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1155389651]
+custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("5_3r3h5")
-texture_hover = ExtResource("6_hover")
-texture_pressed = ExtResource("7_active")
+texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/QuitButton" unique_id=2040238155]
 layout_mode = 1
@@ -179,11 +194,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "SALIR
-"
+theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 17
+text = "SALIR"
 horizontal_alignment = 1
 vertical_alignment = 1
-
 [node name="InfoDimmer" type="ColorRect" parent="."]
 visible = false
 layout_mode = 1
@@ -266,3 +281,5 @@ vertical_alignment = 1
 
 [node name="blaster-b2" parent="." unique_id=701534889 instance=ExtResource("4_3r3h5")]
 transform = Transform3D(1, 0, 0, 0, 0.98991084, 0.14169168, 0, -0.14169168, 0.98991084, 0.6712704, 0.44974807, 1.1577524)
+
+

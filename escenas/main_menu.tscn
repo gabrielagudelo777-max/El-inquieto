@@ -1,5 +1,21 @@
 [gd_scene format=3 uid="uid://cihkvfofw243g"]
 
+[ext_resource type="PackedScene" uid="uid://b6vuhvpfrlipt" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/crate-wide.glb" id="1_8cfpu"]
+[ext_resource type="Script" uid="uid://bve2ksdfu0x3c" path="res://escenas/main_menu.gd" id="1_pkvd8"]
+[ext_resource type="PackedScene" uid="uid://cxhhy6ma1ijnx" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/target-large.glb" id="2_w6fns"]
+[ext_resource type="Texture2D" uid="uid://c1oybajh5tej8" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty.png" id="3_pkvd8"]
+[ext_resource type="PackedScene" uid="uid://byynkrxl5mi1b" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/blaster-b.glb" id="4_3r3h5"]
+[ext_resource type="Texture2D" uid="uid://btvb05dfk7ey6" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Normal.png" id="5_3r3h5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r6318"]
+
+[sub_resource type="Sky" id="Sky_bm2sk"]
+sky_material = SubResource("ProceduralSkyMaterial_r6318")
+
+[sub_resource type="Environment" id="Environment_uxa2c"]
+background_mode = 2
+sky = SubResource("Sky_bm2sk")
+
 [node name="MainMenu" type="Control" unique_id=1847683811]
 layout_mode = 3
 anchors_preset = 15
@@ -7,55 +23,126 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_pkvd8")
 
-[node name="Background" type="ColorRect" parent="." unique_id=749160552]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=681568140]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.03137255, 0.050980393, 0.078431375, 1)
+stretch = true
+metadata/_edit_use_anchors_ = true
 
-[node name="TitleLabel" type="Label" parent="." unique_id=432695674]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-text = "El Inquieto"
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1596722173]
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="EscenarioFondo" type="Node3D" parent="SubViewportContainer/SubViewport" unique_id=1776686722]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1670812423]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1385564580]
+environment = SubResource("Environment_uxa2c")
+
+[node name="crate-wide2" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=825034362 instance=ExtResource("1_8cfpu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055144727, 0.34694767, 1.1257474)
+
+[node name="target-large2" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1451614526 instance=ExtResource("2_w6fns")]
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1431531116]
+transform = Transform3D(-0.08715446, -0.24100159, 0.9666035, 0, 0.97029567, 0.24192214, -0.99619484, 0.021084594, -0.084565595, 2.296908, 0.80061305, 1.5789564)
 
 [node name="MenuPanel" type="NinePatchRect" parent="." unique_id=1971913646]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -541.0
+offset_top = -181.0
+offset_right = -181.0
+offset_bottom = 261.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_pkvd8")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
 
 [node name="MarginContainer" type="MarginContainer" parent="MenuPanel" unique_id=266365526]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer" unique_id=525443038]
 layout_mode = 2
+theme_override_constants/separation = 25
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=432695674]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "El Inquieto"
+horizontal_alignment = 1
 
 [node name="PlayButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=191605186]
 layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("5_3r3h5")
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/PlayButton" unique_id=998601735]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "JUGAR"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="OptionsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
 layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("5_3r3h5")
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/OptionsButton" unique_id=41628118]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.99744755, 1)
+text = "OPCIONES"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="QuitButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1155389651]
 layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("5_3r3h5")
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/QuitButton" unique_id=2040238155]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SALIR
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="blaster-b2" parent="." unique_id=701534889 instance=ExtResource("4_3r3h5")]
+transform = Transform3D(1, 0, 0, 0, 0.98991084, 0.14169168, 0, -0.14169168, 0.98991084, 0.6712704, 0.44974807, 1.1577524)

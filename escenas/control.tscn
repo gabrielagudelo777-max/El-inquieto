@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://nj17y14oup4w"]
+
+[ext_resource type="Texture2D" uid="uid://c3aemm1jou7wj" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty Green.png" id="1_ge6vf"]
+[ext_resource type="Texture2D" uid="uid://btvb05dfk7ey6" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Normal.png" id="2_qqb0l"]
+[ext_resource type="Texture2D" uid="uid://cg65kk01l08r4" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="3_5q114"]
+[ext_resource type="Texture2D" uid="uid://d4bhlsb5osg5b" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Hover.png" id="4_wir5x"]
+[ext_resource type="Texture2D" uid="uid://b0i0j388uo4gi" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Disable.png" id="5_6nump"]
+
+[node name="Control" type="Control" unique_id=2125851770]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=1054022618]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_ge6vf")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=405138941]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("2_qqb0l")
+texture_pressed = ExtResource("3_5q114")
+texture_hover = ExtResource("4_wir5x")
+texture_disabled = ExtResource("5_6nump")
+
+[node name="Label" type="Label" parent="TextureButton" unique_id=1362583364]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1

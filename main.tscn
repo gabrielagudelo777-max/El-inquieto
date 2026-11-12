@@ -1,4 +1,13 @@
-[gd_scene format=3]
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://juan/director_campana.gd" id="1_director"]
+[ext_resource type="PackedScene" path="res://juan/ui_campana.tscn" id="2_ui"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_01.tres" id="3_oleada_01"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_02.tres" id="4_oleada_02"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_03.tres" id="5_oleada_03"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_04.tres" id="6_oleada_04"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_05.tres" id="7_oleada_05"]
+[ext_resource type="Resource" path="res://juan/oleadas/oleada_06_jefe.tres" id="8_oleada_jefe"]
 
 [node name="ElInquieto" type="Control"]
 layout_mode = 3
@@ -7,3 +16,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="DirectorCampana" type="Node" parent="."]
+script = ExtResource("1_director")
+oleadas = Array[ExtResource("3_oleada_01")]([ExtResource("3_oleada_01"), ExtResource("4_oleada_02"), ExtResource("5_oleada_03"), ExtResource("6_oleada_04"), ExtResource("7_oleada_05"), ExtResource("8_oleada_jefe")])
+
+[node name="UICampana" parent="." instance=ExtResource("2_ui")]

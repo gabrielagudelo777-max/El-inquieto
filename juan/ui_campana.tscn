@@ -1,0 +1,189 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://juan/ui_campana.gd" id="1_ui"]
+
+[node name="UICampana" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_ui")
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fondo" type="ColorRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.012, 0.019, 0.052, 1)
+mouse_filter = 2
+
+[node name="FranjaSuperior" type="ColorRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 104.0
+grow_horizontal = 2
+color = Color(0.025, 0.055, 0.105, 1)
+mouse_filter = 2
+
+[node name="LineaNeon" type="ColorRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 102.0
+offset_bottom = 105.0
+grow_horizontal = 2
+color = Color(0.08, 0.86, 1, 0.8)
+mouse_filter = 2
+
+[node name="Barra" type="MarginContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 32.0
+offset_top = 24.0
+offset_right = -32.0
+offset_bottom = 82.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="Fila" type="HBoxContainer" parent="HUD/Barra"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Vidas" type="Label" parent="HUD/Barra/Fila"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.78, 1)
+theme_override_font_sizes/font_size = 21
+text = "VIDAS  3"
+
+[node name="Oleada" type="Label" parent="HUD/Barra/Fila"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.78, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "OLEADA  01 / 06"
+horizontal_alignment = 1
+
+[node name="Puntaje" type="Label" parent="HUD/Barra/Fila"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.28, 1)
+theme_override_font_sizes/font_size = 19
+text = "PUNTAJE  000000"
+horizontal_alignment = 2
+
+[node name="Record" type="Label" parent="HUD/Barra/Fila"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.86, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "RÉCORD  000000"
+horizontal_alignment = 2
+
+[node name="Centro" type="CenterContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="EstadoCombate" type="Label" parent="HUD/Centro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.83, 0.93, 0.75)
+theme_override_font_sizes/font_size = 18
+text = "Capa de campaña lista · combate por integrar"
+
+[node name="Overlay" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Fondo" type="ColorRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.008, 0.015, 0.045, 0.90)
+mouse_filter = 2
+
+[node name="AcentoSuperior" type="ColorRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 4.0
+grow_horizontal = 2
+color = Color(0.05, 0.82, 1, 0.9)
+mouse_filter = 2
+
+[node name="Centro" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Overlay/Centro"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+
+[node name="Contenido" type="VBoxContainer" parent="Overlay/Centro/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Kicker" type="Label" parent="Overlay/Centro/Panel/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.31, 0.58, 1)
+theme_override_font_sizes/font_size = 14
+text = "PROTOCOLO DE DEFENSA // PC"
+horizontal_alignment = 1
+
+[node name="Titulo" type="Label" parent="Overlay/Centro/Panel/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 42
+text = "EL INQUIETO"
+horizontal_alignment = 1
+
+[node name="Detalle" type="Label" parent="Overlay/Centro/Panel/Contenido"]
+custom_minimum_size = Vector2(0, 116)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "ASALTO // PROTOTIPO PARA PC"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="BotonPrincipal" type="Button" parent="Overlay/Centro/Panel/Contenido"]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "INICIAR CAMPAÑA"
+
+[node name="BotonMenu" type="Button" parent="Overlay/Centro/Panel/Contenido"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "VOLVER AL MENÚ"
+visible = false

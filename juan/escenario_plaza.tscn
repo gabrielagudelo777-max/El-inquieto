@@ -1,0 +1,281 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://juan/escenario_plaza.gd" id="1_escenario"]
+[ext_resource type="Script" path="res://juan/cinematicas.gd" id="2_cinematicas"]
+
+[sub_resource type="StandardMaterial3D" id="Material_asfalto"]
+albedo_color = Color(0.035, 0.065, 0.105, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="Material_borde"]
+albedo_color = Color(0.035, 0.16, 0.22, 1)
+metallic = 0.32
+roughness = 0.48
+
+[sub_resource type="StandardMaterial3D" id="Material_cian"]
+albedo_color = Color(0.035, 0.75, 0.88, 1)
+emission_enabled = true
+emission = Color(0.02, 0.48, 0.72, 1)
+emission_energy_multiplier = 1.6
+
+[sub_resource type="StandardMaterial3D" id="Material_magenta"]
+albedo_color = Color(0.92, 0.08, 0.39, 1)
+emission_enabled = true
+emission = Color(0.65, 0.025, 0.18, 1)
+emission_energy_multiplier = 1.25
+
+[sub_resource type="StandardMaterial3D" id="Material_amarillo"]
+albedo_color = Color(1, 0.68, 0.12, 1)
+emission_enabled = true
+emission = Color(0.75, 0.28, 0.025, 1)
+emission_energy_multiplier = 0.75
+
+[sub_resource type="StandardMaterial3D" id="Material_puesto"]
+albedo_color = Color(0.13, 0.31, 0.28, 1)
+roughness = 0.65
+
+[sub_resource type="StandardMaterial3D" id="Material_buseta"]
+albedo_color = Color(0.72, 0.09, 0.16, 1)
+metallic = 0.12
+roughness = 0.56
+
+[sub_resource type="StandardMaterial3D" id="Material_ventana"]
+albedo_color = Color(0.025, 0.11, 0.18, 1)
+metallic = 0.28
+roughness = 0.25
+
+[sub_resource type="Environment" id="Environment_plaza"]
+background_mode = 1
+background_color = Color(0.018, 0.027, 0.065, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.22, 0.31, 0.48, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+
+[node name="EscenarioPlaza" type="Node3D"]
+script = ExtResource("1_escenario")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_plaza")
+
+[node name="Suelo" type="CSGBox3D" parent="."]
+use_collision = true
+size = Vector3(30, 0.5, 22)
+position = Vector3(0, -0.25, 0)
+material = SubResource("Material_asfalto")
+
+[node name="PlazaDelReenvio" type="Node3D" parent="."]
+
+[node name="BordeNorte" type="CSGBox3D" parent="PlazaDelReenvio"]
+use_collision = true
+size = Vector3(30, 1.4, 0.6)
+position = Vector3(0, 0.45, -11)
+material = SubResource("Material_borde")
+
+[node name="BordeSur" type="CSGBox3D" parent="PlazaDelReenvio"]
+use_collision = true
+size = Vector3(30, 1.4, 0.6)
+position = Vector3(0, 0.45, 11)
+material = SubResource("Material_borde")
+
+[node name="BordeOeste" type="CSGBox3D" parent="PlazaDelReenvio"]
+use_collision = true
+size = Vector3(0.6, 1.4, 22)
+position = Vector3(-15, 0.45, 0)
+material = SubResource("Material_borde")
+
+[node name="BordeEste" type="CSGBox3D" parent="PlazaDelReenvio"]
+use_collision = true
+size = Vector3(0.6, 1.4, 22)
+position = Vector3(15, 0.45, 0)
+material = SubResource("Material_borde")
+
+[node name="LineasViales" type="Node3D" parent="PlazaDelReenvio"]
+
+[node name="CarrilCentro" type="CSGBox3D" parent="PlazaDelReenvio/LineasViales"]
+size = Vector3(0.16, 0.025, 16)
+position = Vector3(0, 0.015, 0)
+material = SubResource("Material_amarillo")
+
+[node name="Cruce1" type="CSGBox3D" parent="PlazaDelReenvio/LineasViales"]
+size = Vector3(8, 0.025, 0.12)
+position = Vector3(-7, 0.018, 5.2)
+material = SubResource("Material_cian")
+
+[node name="Cruce2" type="CSGBox3D" parent="PlazaDelReenvio/LineasViales"]
+size = Vector3(8, 0.025, 0.12)
+position = Vector3(7, 0.018, 5.2)
+material = SubResource("Material_cian")
+
+[node name="Coberturas" type="Node3D" parent="."]
+
+[node name="BunkerArepas" type="CSGBox3D" parent="Coberturas"]
+use_collision = true
+size = Vector3(3.4, 1.4, 0.9)
+position = Vector3(-7, 0.7, 3.5)
+material = SubResource("Material_amarillo")
+
+[node name="BunkerChiva" type="CSGBox3D" parent="Coberturas"]
+use_collision = true
+size = Vector3(3.4, 1.4, 0.9)
+position = Vector3(0, 0.7, 3.5)
+material = SubResource("Material_magenta")
+
+[node name="BunkerRimax" type="CSGBox3D" parent="Coberturas"]
+use_collision = true
+size = Vector3(3.4, 1.4, 0.9)
+position = Vector3(7, 0.7, 3.5)
+material = SubResource("Material_cian")
+
+[node name="PuestoArepas" type="Node3D" parent="."]
+position = Vector3(-10.2, 0, -4.8)
+
+[node name="Mostrador" type="CSGBox3D" parent="PuestoArepas"]
+size = Vector3(3.2, 1.35, 1.6)
+position = Vector3(0, 0.68, 0)
+material = SubResource("Material_puesto")
+
+[node name="Techo" type="CSGBox3D" parent="PuestoArepas"]
+size = Vector3(3.8, 0.22, 2.0)
+position = Vector3(0, 2.05, 0)
+material = SubResource("Material_magenta")
+
+[node name="LetreroArepas" type="Label3D" parent="PuestoArepas"]
+position = Vector3(0, 1.58, 0.84)
+pixel_size = 0.008
+text = "AREPAS  ·  TINTO"
+font_size = 48
+outline_size = 8
+modulate = Color(1, 0.88, 0.45, 1)
+
+[node name="BusetaCore" type="Node3D" parent="."]
+position = Vector3(9.2, 0, -7.0)
+
+[node name="Carroceria" type="CSGBox3D" parent="BusetaCore"]
+size = Vector3(5.7, 1.65, 2.25)
+position = Vector3(0, 1.0, 0)
+material = SubResource("Material_buseta")
+
+[node name="TechoBuseta" type="CSGBox3D" parent="BusetaCore"]
+size = Vector3(5.35, 0.35, 2.0)
+position = Vector3(0, 2.0, 0)
+material = SubResource("Material_amarillo")
+
+[node name="Parabrisas" type="CSGBox3D" parent="BusetaCore"]
+size = Vector3(3.0, 0.8, 0.08)
+position = Vector3(0, 1.35, 1.17)
+material = SubResource("Material_ventana")
+
+[node name="LetreroBuseta" type="Label3D" parent="BusetaCore"]
+position = Vector3(0, 2.27, 1.2)
+pixel_size = 0.009
+text = "VIRAL EXPRESS"
+font_size = 40
+outline_size = 8
+modulate = Color(0.37, 0.95, 1, 1)
+
+[node name="Mural" type="CSGBox3D" parent="."]
+size = Vector3(13.0, 4.5, 0.35)
+position = Vector3(0, 2.25, -10.35)
+material = SubResource("Material_ventana")
+
+[node name="TextoMural" type="Label3D" parent="."]
+position = Vector3(0, 3.2, -10.14)
+pixel_size = 0.018
+text = "LA PLAZA DEL REENVÍO"
+font_size = 56
+outline_size = 12
+modulate = Color(0.12, 0.89, 1, 1)
+
+[node name="Graffiti" type="Label3D" parent="."]
+position = Vector3(-5.2, 1.15, -10.13)
+pixel_size = 0.011
+text = "¿YA VISTE EL VIDEO?"
+font_size = 34
+outline_size = 8
+modulate = Color(1, 0.24, 0.52, 1)
+
+[node name="PuntosDeJuego" type="Node3D" parent="."]
+
+[node name="InicioJugador" type="Marker3D" parent="PuntosDeJuego" groups=["inicio_jugador"]]
+position = Vector3(0, 0.1, 8.5)
+
+[node name="EntradaEnemigosIzquierda" type="Marker3D" parent="PuntosDeJuego" groups=["entrada_enemigos"]]
+position = Vector3(-10, 0.5, -7.5)
+
+[node name="EntradaEnemigosCentro" type="Marker3D" parent="PuntosDeJuego" groups=["entrada_enemigos"]]
+position = Vector3(0, 0.5, -8.5)
+
+[node name="EntradaEnemigosDerecha" type="Marker3D" parent="PuntosDeJuego" groups=["entrada_enemigos"]]
+position = Vector3(10, 0.5, -7.5)
+
+[node name="CamaraIsometrica" type="Camera3D" parent="."]
+position = Vector3(17, 22, 17)
+projection = 1
+size = 28.0
+current = true
+
+[node name="LuzPrincipal" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.75, -0.55, 0)
+light_color = Color(0.62, 0.82, 1, 1)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="Cinematicas" type="Node" parent="."]
+script = ExtResource("2_cinematicas")
+
+[node name="InterfazCinematica" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Cortina" type="Control" parent="InterfazCinematica"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+visible = false
+
+[node name="Fondo" type="ColorRect" parent="InterfazCinematica/Cortina"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.008, 0.014, 0.04, 0.75)
+mouse_filter = 2
+
+[node name="Contenido" type="VBoxContainer" parent="InterfazCinematica/Cortina"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.1
+anchor_top = 0.72
+anchor_right = 0.9
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
+mouse_filter = 2
+
+[node name="Titulo" type="Label" parent="InterfazCinematica/Cortina/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.26, 0.91, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "LA PLAZA DEL REENVÍO"
+horizontal_alignment = 1
+
+[node name="Detalle" type="Label" parent="InterfazCinematica/Cortina/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.88, 0.71, 1)
+theme_override_font_sizes/font_size = 18
+text = "Una señal viral ha despertado la ciudad."
+horizontal_alignment = 1
+
+[node name="ConsejoSaltar" type="Label" parent="InterfazCinematica/Cortina/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.75, 0.86, 0.9)
+theme_override_font_sizes/font_size = 14
+text = "PRESIONA ESC PARA SALTAR"
+horizontal_alignment = 1

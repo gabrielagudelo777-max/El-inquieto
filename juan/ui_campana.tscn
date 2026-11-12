@@ -24,6 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.012, 0.019, 0.052, 1)
 mouse_filter = 2
+visible = false
 
 [node name="FranjaSuperior" type="ColorRect" parent="HUD"]
 layout_mode = 1

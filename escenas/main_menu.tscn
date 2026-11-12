@@ -1,28 +1,32 @@
 [gd_scene format=3 uid="uid://cihkvfofw243g"]
 
-[ext_resource type="PackedScene" uid="uid://b6vuhvpfrlipt" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/crate-wide.glb" id="1_8cfpu"]
 [ext_resource type="Script" uid="uid://bve2ksdfu0x3c" path="res://escenas/main_menu.gd" id="1_pkvd8"]
-[ext_resource type="PackedScene" uid="uid://cxhhy6ma1ijnx" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/target-large.glb" id="2_w6fns"]
 [ext_resource type="Texture2D" uid="uid://c1oybajh5tej8" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty.png" id="3_pkvd8"]
-[ext_resource type="PackedScene" uid="uid://byynkrxl5mi1b" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/blaster-b.glb" id="4_3r3h5"]
-[ext_resource type="FontFile" path="res://assets/fonts/CinzelDecorative-Regular.ttf" id="8_font"]
-[ext_resource type="Texture2D" path="res://assets/menu_gradient.svg" id="9_gradient"]
 [ext_resource type="Texture2D" uid="uid://btvb05dfk7ey6" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Normal.png" id="5_3r3h5"]
-[ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Hover.png" id="6_hover"]
-[ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="7_active"]
+[ext_resource type="Texture2D" uid="uid://d4bhlsb5osg5b" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Hover.png" id="6_hover"]
+[ext_resource type="Texture2D" uid="uid://cg65kk01l08r4" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="7_active"]
+[ext_resource type="FontFile" uid="uid://c4uhucciap8aa" path="res://assets/fonts/CinzelDecorative-Regular.ttf" id="8_font"]
+[ext_resource type="Texture2D" uid="uid://b64usdyfjttg3" path="res://assets/menu_gradient.svg" id="9_gradient"]
+[ext_resource type="PackedScene" uid="uid://dii87d57akic3" path="res://assets/quaternius_ultimate_space/Astronaut.glb" id="10_astronaut"]
+[ext_resource type="PackedScene" uid="uid://cgcwggu7cgftr" path="res://assets/quaternius_modular_scifi/glTF/Aliens/Alien_Scolitex.gltf" id="11_enemy"]
+[ext_resource type="PackedScene" uid="uid://c7d3vl0cxt8wo" path="res://assets/quaternius_modular_scifi/glTF/Platforms/Platform_DarkPlates.gltf" id="14_floor"]
+[ext_resource type="PackedScene" uid="uid://bw7vrisrbvoyd" path="res://assets/quaternius_modular_scifi/glTF/Props/Prop_Light_Floor.gltf" id="16_floor_light"]
+[ext_resource type="Texture2D" uid="uid://b3f1uqhkrv514" path="res://assets/kenney_skyboxes_space/Skyboxes/skybox-space-nebula.png" id="17_nebula"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r6318"]
-sky_top_color = Color(0.08, 0.16, 0.28, 1)
-sky_horizon_color = Color(0.31, 0.52, 0.59, 1)
-ground_bottom_color = Color(0.025, 0.055, 0.07, 1)
-ground_horizon_color = Color(0.12, 0.27, 0.23, 1)
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nebula"]
+panorama = ExtResource("17_nebula")
+energy_multiplier = 0.65
 
 [sub_resource type="Sky" id="Sky_bm2sk"]
-sky_material = SubResource("ProceduralSkyMaterial_r6318")
+sky_material = SubResource("PanoramaSkyMaterial_nebula")
 
 [sub_resource type="Environment" id="Environment_uxa2c"]
 background_mode = 2
 sky = SubResource("Sky_bm2sk")
+ambient_light_source = 1
+ambient_light_color = Color(0.56, 0.67, 0.84, 1)
+ambient_light_energy = 1.4
+tonemap_exposure = 1.2
 
 [node name="MainMenu" type="Control" unique_id=1847683811]
 layout_mode = 3
@@ -52,17 +56,27 @@ render_target_update_mode = 4
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1670812423]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+light_color = Color(0.72, 0.82, 1, 1)
+light_energy = 2.0
+shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1385564580]
 environment = SubResource("Environment_uxa2c")
 
-[node name="crate-wide2" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=825034362 instance=ExtResource("1_8cfpu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055144727, 0.34694767, 1.1257474)
+[node name="SpaceFloor" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1764623219 instance=ExtResource("14_floor")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 1.8, -0.12, 0.3)
 
-[node name="target-large2" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1451614526 instance=ExtResource("2_w6fns")]
+[node name="FloorLight" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=679839032 instance=ExtResource("16_floor_light")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, -0.05, 0.35)
+
+[node name="Astronaut" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=2014831115 instance=ExtResource("10_astronaut")]
+transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 1.6, 0, 0.5)
+
+[node name="Enemigo" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1331686686 instance=ExtResource("11_enemy")]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 4, -0.1, -1.6)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1431531116]
-transform = Transform3D(-0.08715446, -0.24100159, 0.9666035, 0, 0.97029567, 0.24192214, -0.99619484, 0.021084594, -0.084565595, 2.296908, 0.80061305, 1.5789564)
+transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 1.1, 1.6, 6.3)
 
 [node name="MenuPanel" type="Control" parent="." unique_id=1971913646]
 layout_mode = 1
@@ -73,7 +87,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Shade" type="TextureRect" parent="MenuPanel"]
+[node name="Shade" type="TextureRect" parent="MenuPanel" unique_id=474674148]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,10 +97,10 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("9_gradient")
 expand_mode = 1
-stretch_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="MenuPanel" unique_id=266365526]
 layout_mode = 1
+anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 545.0
 theme_override_constants/margin_left = 58
@@ -98,7 +112,7 @@ theme_override_constants/margin_bottom = 34
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="EmblemLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="EmblemLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1656998841]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.84, 0.78, 0.58, 1)
 theme_override_font_sizes/font_size = 27
@@ -111,27 +125,27 @@ theme_override_fonts/font = ExtResource("8_font")
 theme_override_font_sizes/font_size = 47
 text = "EL INQUIETO"
 
-[node name="SubtitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="SubtitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=462772251]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.77, 0.82, 0.78, 1)
 theme_override_fonts/font = ExtResource("8_font")
 theme_override_font_sizes/font_size = 14
 text = "ASALTO ARCADE"
 
-[node name="TaglineLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="TaglineLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1579299802]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.76, 0.73, 1)
 theme_override_font_sizes/font_size = 13
 text = "SOBREVIVE A CADA OLEADA"
 
-[node name="MenuSpacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(1, 78)
+[node name="MenuSpacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=609968361]
+custom_minimum_size = Vector2(1, 36)
 layout_mode = 2
 
 [node name="PlayButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=191605186]
+texture_filter = 1
 custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/PlayButton" unique_id=998601735]
 layout_mode = 1
@@ -147,9 +161,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ControlsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
+texture_filter = 1
 custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/ControlsButton" unique_id=41628118]
 layout_mode = 1
@@ -164,12 +178,12 @@ text = "CONTROLES"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CreditsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="CreditsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=132194761]
+texture_filter = 1
 custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-texture_filter = 1
 
-[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/CreditsButton"]
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/CreditsButton" unique_id=198450247]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -178,14 +192,14 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
 theme_override_font_sizes/font_size = 17
-text = "CREDITOS"
+text = "CRÉDITOS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuitButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1155389651]
+texture_filter = 1
 custom_minimum_size = Vector2(260, 42)
 layout_mode = 2
-texture_filter = 1
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/QuitButton" unique_id=2040238155]
 layout_mode = 1
@@ -199,7 +213,8 @@ theme_override_font_sizes/font_size = 17
 text = "SALIR"
 horizontal_alignment = 1
 vertical_alignment = 1
-[node name="InfoDimmer" type="ColorRect" parent="."]
+
+[node name="InfoDimmer" type="ColorRect" parent="." unique_id=1346477880]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -209,7 +224,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.04, 0.08, 0.72)
 
-[node name="InfoPanel" type="NinePatchRect" parent="."]
+[node name="InfoPanel" type="NinePatchRect" parent="." unique_id=21757413]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -229,7 +244,7 @@ patch_margin_top = 20
 patch_margin_right = 20
 patch_margin_bottom = 20
 
-[node name="MarginContainer" type="MarginContainer" parent="InfoPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="InfoPanel" unique_id=1970467364]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -241,34 +256,37 @@ theme_override_constants/margin_top = 30
 theme_override_constants/margin_right = 34
 theme_override_constants/margin_bottom = 30
 
-[node name="VBoxContainer" type="VBoxContainer" parent="InfoPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="InfoPanel/MarginContainer" unique_id=1752533530]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="Title" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer" unique_id=1960879761]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
 text = "CONTROLES"
 horizontal_alignment = 1
 
-[node name="Description" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer"]
+[node name="Description" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer" unique_id=398953242]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.92, 0.91, 0.8, 1)
 theme_override_font_sizes/font_size = 20
-text = "MOVERSE     WASD o flechas\nDISPARAR     Espacio\nDASH              Shift\nPAUSA            Esc"
+text = "MOVERSE     WASD o flechas
+DISPARAR     Espacio
+DASH              Shift
+PAUSA            Esc"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="InfoPanel/MarginContainer/VBoxContainer"]
+[node name="CloseButton" type="TextureButton" parent="InfoPanel/MarginContainer/VBoxContainer" unique_id=2113362788]
 layout_mode = 2
 size_flags_horizontal = 4
 texture_normal = ExtResource("5_3r3h5")
-texture_hover = ExtResource("6_hover")
 texture_pressed = ExtResource("7_active")
+texture_hover = ExtResource("6_hover")
 
-[node name="Label" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer/CloseButton"]
+[node name="Label" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer/CloseButton" unique_id=1942105437]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -278,8 +296,3 @@ grow_vertical = 2
 text = "VOLVER"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="blaster-b2" parent="." unique_id=701534889 instance=ExtResource("4_3r3h5")]
-transform = Transform3D(1, 0, 0, 0, 0.98991084, 0.14169168, 0, -0.14169168, 0.98991084, 0.6712704, 0.44974807, 1.1577524)
-
-

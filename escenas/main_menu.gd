@@ -78,14 +78,17 @@ func _animar_boton(button: Control, escala: float) -> void:
 
 
 func _animar_fondo() -> void:
-	var caja := $SubViewportContainer/SubViewport/EscenarioFondo.get_node("crate-wide2") as Node3D
-	var blanco := $SubViewportContainer/SubViewport/EscenarioFondo.get_node("target-large2") as Node3D
-	var caja_tween := create_tween().set_loops()
-	caja_tween.tween_property(caja, "rotation:y", deg_to_rad(10), 2.4)
-	caja_tween.tween_property(caja, "rotation:y", deg_to_rad(-10), 2.4)
-	var blanco_tween := create_tween().set_loops()
-	blanco_tween.tween_property(blanco, "rotation:y", TAU, 8.0)
-
+	var astronauta := $SubViewportContainer/SubViewport/EscenarioFondo/Astronaut as Node3D
+	var enemigo := $SubViewportContainer/SubViewport/EscenarioFondo/Enemigo as Node3D
+	var animacion := astronauta.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if animacion:
+		animacion.play("CharacterArmature|Idle_Gun")
+	var movimiento := create_tween().set_loops()
+	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(-5), 2.5)
+	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(5), 2.5)
+	var enemigo_movimiento := create_tween().set_loops()
+	enemigo_movimiento.tween_property(enemigo, "rotation:y", deg_to_rad(-8), 3.0)
+	enemigo_movimiento.tween_property(enemigo, "rotation:y", deg_to_rad(8), 3.0)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

@@ -42,7 +42,7 @@ func _iniciar_campana(escena: Node) -> void:
 func _on_controls_pressed() -> void:
 	_mostrar_info(
 		"CONTROLES",
-		"MOVERSE: WASD o flechas\nDISPARAR: Espacio\nDASH: Shift\nPAUSA: Esc"
+		"MOVERSE: WASD o flechas\nDISPARAR: Espacio\nCORRER: Ctrl\nDASH: Shift\nPAUSA: Esc"
 	)
 
 

@@ -66,7 +66,7 @@ func _actualizar_estado(nuevo: int) -> void:
 	match nuevo:
 		DirectorCampana.Estado.MENU:
 			lbl_titulo.text = "EL INQUIETO"
-			lbl_detalle.text = "ASALTO // PROTOTIPO PARA PC\n\nSobrevive a las formaciones. Muévete, dispara y encuentra el momento para esquivar.\n\nA / D o flechas: mover   ·   Espacio: disparar\nShift: dash   ·   Esc: pausa"
+			lbl_detalle.text = "ASALTO // PROTOTIPO PARA PC\n\nSobrevive a las formaciones. Muévete, dispara y encuentra el momento para esquivar.\n\nWASD o flechas: mover   ·   Espacio: disparar\nCtrl: correr   ·   Shift: dash   ·   Esc: pausa"
 			btn_principal.text = "INICIAR CAMPAÑA"
 		DirectorCampana.Estado.INTRO:
 			lbl_titulo.text = "SEÑAL DE ALERTA"

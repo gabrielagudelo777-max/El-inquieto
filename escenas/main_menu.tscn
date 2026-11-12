@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://cihkvfofw243g"]
+
+[node name="MainMenu" type="Control" unique_id=1847683811]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="." unique_id=749160552]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03137255, 0.050980393, 0.078431375, 1)
+
+[node name="TitleLabel" type="Label" parent="." unique_id=432695674]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "El Inquieto"
+
+[node name="MenuPanel" type="NinePatchRect" parent="." unique_id=1971913646]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="MenuPanel" unique_id=266365526]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer" unique_id=525443038]
+layout_mode = 2
+
+[node name="PlayButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=191605186]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/PlayButton" unique_id=998601735]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="OptionsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/OptionsButton" unique_id=41628118]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="QuitButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1155389651]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/QuitButton" unique_id=2040238155]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

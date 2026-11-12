@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://c1oybajh5tej8" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty.png" id="3_pkvd8"]
 [ext_resource type="PackedScene" uid="uid://byynkrxl5mi1b" path="res://assets/kenney_blaster-kit_2.1/Models/GLB format/blaster-b.glb" id="4_3r3h5"]
 [ext_resource type="Texture2D" uid="uid://btvb05dfk7ey6" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Normal.png" id="5_3r3h5"]
+[ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Hover.png" id="6_hover"]
+[ext_resource type="Texture2D" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="7_active"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r6318"]
 
@@ -63,10 +65,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -541.0
-offset_top = -181.0
-offset_right = -181.0
-offset_bottom = 261.0
+offset_left = -600.0
+offset_top = -285.0
+offset_right = -200.0
+offset_bottom = 285.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_pkvd8")
@@ -85,7 +87,7 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer" unique_id=525443038]
 layout_mode = 2
-theme_override_constants/separation = 25
+theme_override_constants/separation = 12
 alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=432695674]
@@ -94,10 +96,26 @@ theme_override_font_sizes/font_size = 64
 text = "El Inquieto"
 horizontal_alignment = 1
 
+[node name="SubtitleLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.43, 0.89, 0.91, 1)
+theme_override_font_sizes/font_size = 17
+text = "ASALTO ARCADE"
+horizontal_alignment = 1
+
+[node name="TaglineLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.91, 0.8, 1)
+theme_override_font_sizes/font_size = 14
+text = "SOBREVIVE A CADA OLEADA"
+horizontal_alignment = 1
+
 [node name="PlayButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=191605186]
 layout_mode = 2
 size_flags_horizontal = 4
 texture_normal = ExtResource("5_3r3h5")
+texture_hover = ExtResource("6_hover")
+texture_pressed = ExtResource("7_active")
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/PlayButton" unique_id=998601735]
 layout_mode = 1
@@ -110,12 +128,14 @@ text = "JUGAR"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="OptionsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
+[node name="ControlsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
 layout_mode = 2
 size_flags_horizontal = 4
 texture_normal = ExtResource("5_3r3h5")
+texture_hover = ExtResource("6_hover")
+texture_pressed = ExtResource("7_active")
 
-[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/OptionsButton" unique_id=41628118]
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/ControlsButton" unique_id=41628118]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -123,7 +143,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.99744755, 1)
-text = "OPCIONES"
+text = "CONTROLES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CreditsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("5_3r3h5")
+texture_hover = ExtResource("6_hover")
+texture_pressed = ExtResource("7_active")
+
+[node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/CreditsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "CRÉDITOS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -131,6 +169,8 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 texture_normal = ExtResource("5_3r3h5")
+texture_hover = ExtResource("6_hover")
+texture_pressed = ExtResource("7_active")
 
 [node name="Label" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer/QuitButton" unique_id=2040238155]
 layout_mode = 1
@@ -141,6 +181,86 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "SALIR
 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoDimmer" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.04, 0.08, 0.72)
+
+[node name="InfoPanel" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -190.0
+offset_right = 250.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_pkvd8")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="InfoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InfoPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "CONTROLES"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.92, 0.91, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "MOVERSE     WASD o flechas\nDISPARAR     Espacio\nDASH              Shift\nPAUSA            Esc"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="InfoPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("5_3r3h5")
+texture_hover = ExtResource("6_hover")
+texture_pressed = ExtResource("7_active")
+
+[node name="Label" type="Label" parent="InfoPanel/MarginContainer/VBoxContainer/CloseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "VOLVER"
 horizontal_alignment = 1
 vertical_alignment = 1
 

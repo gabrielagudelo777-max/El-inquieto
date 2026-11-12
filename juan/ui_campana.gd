@@ -29,7 +29,11 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel") or director == null:
 		return
-	if estado_actual == DirectorCampana.Estado.COMBATE or estado_actual == DirectorCampana.Estado.INTERMISION:
+	if estado_actual == DirectorCampana.Estado.INTRO or estado_actual == DirectorCampana.Estado.INTRO_JEFE:
+		_saltar_cinematica()
+		director.saltar_intro()
+		get_viewport().set_input_as_handled()
+	elif estado_actual == DirectorCampana.Estado.COMBATE or estado_actual == DirectorCampana.Estado.INTERMISION:
 		director.pausar()
 		get_viewport().set_input_as_handled()
 	elif estado_actual == DirectorCampana.Estado.PAUSA:
@@ -68,9 +72,16 @@ func _actualizar_estado(nuevo: int) -> void:
 			lbl_titulo.text = "SEÑAL DE ALERTA"
 			lbl_detalle.text = "Lectura de movimiento enemigo detectada…"
 			btn_principal.text = "SALTAR INTRO"
+			_reproducir_intro()
+		DirectorCampana.Estado.INTRO_JEFE:
+			lbl_titulo.text = "AMENAZA DE ALTA TENDENCIA"
+			lbl_detalle.text = "Una figura domina la formación."
+			btn_principal.text = "SALTAR PRESENTACIÓN"
+			var config: OleadaConfig = director.oleadas[director.indice_oleada]
+			_presentar_jefe(config.nombre)
 		DirectorCampana.Estado.COMBATE:
 			mostrar_overlay = false
-			lbl_estado.text = "Capa de campaña lista · combate por integrar"
+			lbl_estado.text = ""
 		DirectorCampana.Estado.INTERMISION:
 			lbl_titulo.text = "OLEADA COMPLETADA"
 			lbl_detalle.text = "Recupera el aliento."
@@ -134,6 +145,10 @@ func _al_pulsar_principal() -> void:
 		DirectorCampana.Estado.MENU:
 			director.comenzar_campana()
 		DirectorCampana.Estado.INTRO:
+			_saltar_cinematica()
+			director.saltar_intro()
+		DirectorCampana.Estado.INTRO_JEFE:
+			_saltar_cinematica()
 			director.saltar_intro()
 		DirectorCampana.Estado.PAUSA:
 			director.reanudar()
@@ -144,3 +159,21 @@ func _al_pulsar_principal() -> void:
 func _al_pulsar_menu() -> void:
 	if director != null:
 		director.volver_al_menu()
+
+
+func _reproducir_intro() -> void:
+	var cinematica := get_tree().get_first_node_in_group("cinematicas") as CinematicasEscenario
+	if cinematica != null:
+		cinematica.reproducir_intro()
+
+
+func _presentar_jefe(nombre: String) -> void:
+	var cinematica := get_tree().get_first_node_in_group("cinematicas") as CinematicasEscenario
+	if cinematica != null:
+		cinematica.presentar_jefe(nombre)
+
+
+func _saltar_cinematica() -> void:
+	var cinematica := get_tree().get_first_node_in_group("cinematicas") as CinematicasEscenario
+	if cinematica != null:
+		cinematica.saltar_cinematica()

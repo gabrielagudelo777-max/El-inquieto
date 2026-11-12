@@ -4,7 +4,7 @@ class_name DirectorCampana
 ## Estado central de una partida. La lógica de combate se integra mediante
 ## señales y métodos explícitos; el director no depende del árbol de enemigos.
 
-enum Estado { MENU, INTRO, COMBATE, INTERMISION, PAUSA, DERROTA, VICTORIA }
+enum Estado { MENU, INTRO, INTRO_JEFE, COMBATE, INTERMISION, PAUSA, DERROTA, VICTORIA }
 
 signal estado_cambiado(nuevo_estado: int)
 signal puntaje_cambiado(actual: int, record: int)
@@ -48,6 +48,10 @@ func _process(delta: float) -> void:
 			tiempo_estado = maxf(tiempo_estado - delta, 0.0)
 			if tiempo_estado <= 0.0:
 				_iniciar_siguiente_oleada()
+		Estado.INTRO_JEFE:
+			tiempo_estado = maxf(tiempo_estado - delta, 0.0)
+			if tiempo_estado <= 0.0:
+				_activar_oleada_actual()
 		Estado.INTERMISION:
 			tiempo_estado = maxf(tiempo_estado - delta, 0.0)
 			var segundo := ceili(tiempo_estado)
@@ -76,10 +80,13 @@ func comenzar_campana() -> void:
 
 
 func saltar_intro() -> void:
-	if estado != Estado.INTRO:
-		return
-	tiempo_estado = 0.0
-	_iniciar_siguiente_oleada()
+	match estado:
+		Estado.INTRO:
+			tiempo_estado = 0.0
+			_iniciar_siguiente_oleada()
+		Estado.INTRO_JEFE:
+			tiempo_estado = 0.0
+			_activar_oleada_actual()
 
 
 func pausar() -> void:
@@ -151,6 +158,19 @@ func _iniciar_siguiente_oleada() -> void:
 	if indice_oleada >= oleadas.size():
 		_finalizar(true)
 		return
+	var config: OleadaConfig = oleadas[indice_oleada]
+	if config.es_jefe:
+		tiempo_estado = duracion_jefe_intro()
+		_cambiar_estado(Estado.INTRO_JEFE)
+		return
+	_activar_oleada_actual()
+
+
+func duracion_jefe_intro() -> float:
+	return 2.5
+
+
+func _activar_oleada_actual() -> void:
 	var config: OleadaConfig = oleadas[indice_oleada]
 	enemigos_por_derrotar = config.cantidad_enemigos
 	_ultimo_segundo_emitido = -1

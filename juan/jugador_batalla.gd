@@ -11,13 +11,18 @@ var _direccion_dash := Vector3.ZERO
 var _tiempo_dash := 0.0
 var _enfriamiento_disparo := 0.0
 var _invulnerabilidad := 0.0
+var _director: DirectorCampana
 
 
 func _ready() -> void:
 	add_to_group("jugador")
+	call_deferred("_conectar_director")
 
 
 func _physics_process(delta: float) -> void:
+	if _director != null and _director.estado != DirectorCampana.Estado.COMBATE:
+		velocity = Vector3.ZERO
+		return
 	_enfriamiento_disparo = maxf(0.0, _enfriamiento_disparo - delta)
 	_tiempo_dash = maxf(0.0, _tiempo_dash - delta)
 	_invulnerabilidad = maxf(0.0, _invulnerabilidad - delta)
@@ -52,6 +57,19 @@ func recibir_dano(cantidad: float) -> void:
 		arena.call("mostrar_mensaje", "IMPACTO EN EL TRAJE")
 	if integridad <= 0.0 and arena and arena.has_method("mostrar_mensaje"):
 		arena.call("mostrar_mensaje", "INTEGRIDAD AGOTADA  //  ESC PARA VOLVER")
+	if integridad <= 0.0:
+		if _director == null:
+			_conectar_director()
+		if _director != null:
+			_director.recibir_impacto()
+			if _director.vidas > 0:
+				integridad = 100.0
+				if arena and arena.has_method("mostrar_mensaje"):
+					arena.call("mostrar_mensaje", "TRAJE RESTAURADO  //  VIDAS %d" % _director.vidas)
+
+
+func _conectar_director() -> void:
+	_director = get_tree().get_first_node_in_group("director_campana") as DirectorCampana
 
 
 func _disparar() -> void:

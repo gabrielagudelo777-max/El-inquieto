@@ -5,6 +5,18 @@ extends CharacterBody3D
 
 var _jugador: CharacterBody3D
 var _tiempo_ataque := 0.0
+var _puntos_recompensa := 100
+var _es_jefe := false
+var _fue_derrotado := false
+
+
+func configurar_oleada(rapidez: float, intervalo_ataque: float, puntos: int, es_jefe: bool) -> void:
+	velocidad = rapidez
+	_tiempo_ataque = intervalo_ataque
+	_puntos_recompensa = puntos
+	_es_jefe = es_jefe
+	if es_jefe:
+		integridad = 18
 
 
 func _ready() -> void:
@@ -35,8 +47,14 @@ func _physics_process(delta: float) -> void:
 
 
 func recibir_dano(cantidad: int = 1) -> void:
+	if _fue_derrotado:
+		return
 	integridad -= cantidad
 	if integridad <= 0:
+		_fue_derrotado = true
+		var director := get_tree().get_first_node_in_group("director_campana") as DirectorCampana
+		if director != null:
+			director.registrar_enemigo_derrotado(_puntos_recompensa, _es_jefe)
 		queue_free()
 		return
 	var modelo := get_node_or_null("ModeloAlien") as Node3D

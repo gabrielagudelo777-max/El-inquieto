@@ -1,6 +1,8 @@
-# Arena de batalla
+# Cámara de oleadas
 
-Prototipo 3D de una arena espacial para recorrer y combatir. Toma de *Hades II* la cámara fija elevada, el espacio legible para esquivar y la lectura de amenazas. El arte mantiene los modelos espaciales de Gabriel y usa acentos luminosos cian y ámbar para unir el escenario con el menú.
+Una sola sala cerrada para todas las oleadas. El suelo de losas, las paredes y las columnas tienen colisión; el portal del fondo es un elemento decorativo, no una salida a otra escena.
+
+La distribución toma de *Hades II* el combate en una cámara de mazmorra: piso amplio para esquivar, coberturas bajas, columnas en los bordes, un sello ritual central y un portal que enmarca el fondo. Piedra violeta oscura y bronce cálido dan el tono de inframundo; la nebulosa, los reflejos cian y los emblemas de Larzes mantienen el tema espacial. Las ilustraciones de Larzes aparecen como estandartes dentro de la sala, junto a los modelos 3D de Gabriel.
 
 ## Controles
 
@@ -9,7 +11,7 @@ Prototipo 3D de una arena espacial para recorrer y combatir. Toma de *Hades II* 
 - Espacio: disparar al objetivo más cercano.
 - Esc: regresar al menú.
 
-La primera versión incluye cinco alienígenas que persiguen al astronauta, disparos de energía, daño al traje e indicadores de amenazas e integridad.
+La sala incluye cinco alienígenas que persiguen al astronauta, disparos de energía, daño al traje e indicadores de amenazas e integridad.
 
 ## Recursos
 
@@ -17,6 +19,6 @@ La primera versión incluye cinco alienígenas que persiguen al astronauta, disp
 - Criaturas y luces: `assets/quaternius_modular_scifi/`.
 - Fondo de nebulosa: `assets/kenney_skyboxes_space/`.
 - Marco de interfaz y tipografía: recursos que ya utiliza el menú.
-- El paquete 2D de Larzes se usa como referencia de color y rim light; no está incluido en el repositorio.
+- Emblemas 2D de Larzes: `assets/naves_larzes/`.
 
 La escena principal se mantiene en `main.tscn`, que abre la arena desde el botón Jugar del menú.

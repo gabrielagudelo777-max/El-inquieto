@@ -166,8 +166,9 @@ func _al_pulsar_principal() -> void:
 
 
 func _al_pulsar_menu() -> void:
-	if director != null:
-		director.volver_al_menu()
+	var error := get_tree().change_scene_to_file("res://escenas/main_menu.tscn")
+	if error != OK:
+		push_error("No se pudo volver al menú principal: %s" % error_string(error))
 
 
 func _reproducir_intro() -> void:

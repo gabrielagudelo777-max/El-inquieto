@@ -410,10 +410,25 @@ func _crear_campana() -> void:
 			_director.oleadas.append(configuracion)
 	add_child(_director)
 	_director.oleada_iniciada.connect(_iniciar_oleada)
+	_director.estado_cambiado.connect(_al_cambiar_estado_campana)
 	_escena_aliens = load(ALIEN) as PackedScene
 	var interfaz := ESCENA_UI_CAMPANA.instantiate()
 	add_child(interfaz)
 	_director.comenzar_campana()
+
+
+func _al_cambiar_estado_campana(estado: int) -> void:
+	if estado == DirectorCampana.Estado.INTRO or estado == DirectorCampana.Estado.COMBATE or estado == DirectorCampana.Estado.INTRO_JEFE or estado == DirectorCampana.Estado.MENU:
+		_enemigos_por_aparecer = 0
+		_configuracion_oleada = null
+		for enemigo in get_tree().get_nodes_in_group("enemigos"):
+			if is_instance_valid(enemigo):
+				enemigo.queue_free()
+	if estado == DirectorCampana.Estado.INTRO or (estado == DirectorCampana.Estado.COMBATE and _director.indice_oleada < 0):
+		if is_instance_valid(_jugador):
+			_jugador.set("integridad", 100.0)
+			if is_instance_valid(_barra_integridad):
+				_barra_integridad.value = 100.0
 
 
 func _iniciar_oleada(_indice: int, configuracion: OleadaConfig) -> void:

@@ -1,5 +1,7 @@
 extends Control
 
+const ARCHIVO_RECORD := "user://el_inquieto_record.cfg"
+
 @onready var play_button: TextureButton = $MenuPanel/MarginContainer/VBoxContainer/PlayButton
 @onready var controls_button: TextureButton = $MenuPanel/MarginContainer/VBoxContainer/ControlsButton
 @onready var credits_button: TextureButton = $MenuPanel/MarginContainer/VBoxContainer/CreditsButton
@@ -9,10 +11,16 @@ extends Control
 @onready var info_title: Label = $InfoPanel/MarginContainer/VBoxContainer/Title
 @onready var info_text: Label = $InfoPanel/MarginContainer/VBoxContainer/Description
 @onready var close_button: TextureButton = $InfoPanel/MarginContainer/VBoxContainer/CloseButton
+@onready var record_label: Label = $MenuPanel/MarginContainer/VBoxContainer/RecordLabel
 
 var _info_visible := false
 
 func _ready() -> void:
+	var archivo_record := ConfigFile.new()
+	var puntaje_record := 0
+	if archivo_record.load(ARCHIVO_RECORD) == OK:
+		puntaje_record = maxi(int(archivo_record.get_value("campana", "record", 0)), 0)
+	record_label.text = "RÉCORD  %06d" % puntaje_record
 	play_button.pressed.connect(_on_play_pressed)
 	controls_button.pressed.connect(_on_controls_pressed)
 	credits_button.pressed.connect(_on_credits_pressed)

@@ -27,6 +27,7 @@ El pulido de animaciones del jugador y los enemigos, y el ajuste del cooldown de
 
 - **Implementado, falta revisión manual:** la arena instancia el director, carga los seis recursos, inicia la campaña, aparece enemigos según la oleada, registra puntos por baja y pierde vidas al agotarse la integridad. El HUD de campaña y las pantallas de flujo ya se insertan en la arena.
 - **Implementado, falta revisión manual:** el director lleva el tiempo transcurrido y el HUD lo muestra en minutos y segundos. Los intervalos de ataque ahora respetan la configuración de la oleada después de cada impacto.
+- **Implementado, falta revisión manual:** el menú principal lee y presenta el récord local guardado por el director de campaña.
 - El jefe final actual sigue siendo una variante grande del enemigo base; no se le ha creado un patrón o una presentación distinta.
 
 ## Decisiones pendientes
@@ -40,7 +41,7 @@ La tabla también pide un multiplicador de puntaje, pero no define cómo aumenta
 - [x] Conectar director y aparición de oleadas en la arena (revisión manual pendiente).
 - [x] Conectar bajas, daño, vidas, derrota y victoria (revisión manual pendiente).
 - [ ] Completar HUD de Fase 1; tiempo ya implementado, faltan integridad/escudo, multiplicador y barras de jefe.
-- [ ] Incorporar récord y flujo de pausa/resultados en navegación.
+- [ ] Revisar el récord en menú y cerrar los detalles pendientes de navegación/resultados.
 - [ ] Consolidar balance en recursos editables.
 - [ ] Revisar y cerrar pendientes de Fase 1.
 - [ ] Planificar e implementar Fase 2.

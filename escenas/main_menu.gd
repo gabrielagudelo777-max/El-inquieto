@@ -27,22 +27,14 @@ func _ready() -> void:
 
 func _on_play_pressed() -> void:
 	var error := get_tree().change_scene_to_file("res://main.tscn")
-	if error == OK:
-		get_tree().scene_changed.connect(_iniciar_campana, CONNECT_ONE_SHOT)
-	else:
+	if error != OK:
 		push_error("No se pudo abrir la escena principal: %s" % error_string(error))
-
-
-func _iniciar_campana(escena: Node) -> void:
-	var director := escena.get_node_or_null("DirectorCampana") as DirectorCampana
-	if director != null:
-		director.comenzar_campana()
 
 
 func _on_controls_pressed() -> void:
 	_mostrar_info(
 		"CONTROLES",
-		"MOVERSE: WASD o flechas\nDISPARAR: Espacio\nCORRER: Ctrl\nDASH: Shift\nPAUSA: Esc"
+		"MOVERSE: WASD o flechas\nDISPARAR: Espacio (al objetivo más cercano)\nDASH: Shift\nVOLVER AL MENÚ: Esc"
 	)
 
 

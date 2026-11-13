@@ -205,6 +205,12 @@ theme_override_colors/font_color = Color(0.72, 0.76, 0.73, 1)
 theme_override_font_sizes/font_size = 13
 text = "SOBREVIVE A CADA OLEADA"
 
+[node name="RecordLabel" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.86, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "RÉCORD  000000"
+
 [node name="MenuSpacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=609968361]
 custom_minimum_size = Vector2(1, 36)
 layout_mode = 2

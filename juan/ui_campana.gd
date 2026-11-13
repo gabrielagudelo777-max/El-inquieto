@@ -8,6 +8,7 @@ class_name UICampana
 @onready var lbl_oleada: Label = $HUD/Barra/Fila/Oleada
 @onready var lbl_puntaje: Label = $HUD/Barra/Fila/Puntaje
 @onready var lbl_record: Label = $HUD/Barra/Fila/Record
+@onready var lbl_tiempo: Label = $HUD/Barra/Fila/Tiempo
 @onready var lbl_estado: Label = $HUD/Centro/EstadoCombate
 @onready var overlay: Control = $Overlay
 @onready var lbl_titulo: Label = $Overlay/Centro/Panel/Contenido/Titulo
@@ -51,9 +52,11 @@ func _conectar_director() -> void:
 	director.vidas_cambiadas.connect(_actualizar_vidas)
 	director.oleada_cambiada.connect(_actualizar_oleada)
 	director.cuenta_regresiva.connect(_actualizar_cuenta_regresiva)
+	director.tiempo_cambiado.connect(_actualizar_tiempo)
 	director.campana_finalizada.connect(_mostrar_resultado)
 	_actualizar_puntaje(director.puntaje, director.record)
 	_actualizar_vidas(director.vidas)
+	_actualizar_tiempo(floori(director.tiempo_transcurrido))
 	_actualizar_estado(director.estado)
 
 
@@ -129,6 +132,12 @@ func _actualizar_oleada(indice: int, total: int, nombre: String, es_jefe: bool) 
 func _actualizar_cuenta_regresiva(segundos: int) -> void:
 	if estado_actual == DirectorCampana.Estado.INTERMISION:
 		lbl_detalle.text = "La siguiente formación llega en %d…" % segundos
+
+
+func _actualizar_tiempo(segundos: int) -> void:
+	var minutos := floori(float(segundos) / 60.0)
+	var resto := segundos % 60
+	lbl_tiempo.text = "TIEMPO  %02d:%02d" % [minutos, resto]
 
 
 func _mostrar_resultado(victoria: bool, puntaje: int, record: int) -> void:

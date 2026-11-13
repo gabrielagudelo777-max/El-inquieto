@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="OleadaConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://juan/oleada_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+nombre = "Fuego cruzado"
+cantidad_enemigos = 9
+intervalo_aparicion = 0.75
+rapidez_formacion = 1.4
+intervalo_disparo = 2.6
+puntos_por_enemigo = 120
+pausa_antes_de_la_siguiente = 6.0

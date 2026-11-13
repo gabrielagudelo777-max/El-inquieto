@@ -71,16 +71,23 @@ func _animar_boton(button: Control, escala: float) -> void:
 
 func _animar_fondo() -> void:
 	var astronauta := $SubViewportContainer/SubViewport/EscenarioFondo/Astronaut as Node3D
-	var enemigo := $SubViewportContainer/SubViewport/EscenarioFondo/Enemigo as Node3D
+	var jefe_izquierdo := $SubViewportContainer/SubViewport/EscenarioFondo/JefeIzquierdo as Node3D
+	var jefe_derecho := $SubViewportContainer/SubViewport/EscenarioFondo/JefeDerecho as Node3D
+	var nave_derecha := $SubViewportContainer/SubViewport/EscenarioFondo/NaveDerecha as Node3D
 	var animacion := astronauta.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if animacion:
 		animacion.play("CharacterArmature|Idle_Gun")
 	var movimiento := create_tween().set_loops()
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(-5), 2.5)
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(5), 2.5)
-	var enemigo_movimiento := create_tween().set_loops()
-	enemigo_movimiento.tween_property(enemigo, "rotation:y", deg_to_rad(-8), 3.0)
-	enemigo_movimiento.tween_property(enemigo, "rotation:y", deg_to_rad(8), 3.0)
+	movimiento.tween_property(astronauta, "rotation:y", PI + deg_to_rad(5), 2.5)
+	movimiento.tween_property(astronauta, "rotation:y", PI - deg_to_rad(5), 2.5)
+	var movimiento_jefes := create_tween().set_loops()
+	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 1.65, 2.0)
+	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 1.55, 2.0)
+	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 1.45, 2.0)
+	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 1.35, 2.0)
+	var movimiento_nave := create_tween().set_loops()
+	movimiento_nave.tween_property(nave_derecha, "position:y", 2.85, 2.2)
+	movimiento_nave.tween_property(nave_derecha, "position:y", 2.65, 2.2)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

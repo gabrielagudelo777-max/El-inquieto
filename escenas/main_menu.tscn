@@ -8,10 +8,13 @@
 [ext_resource type="FontFile" uid="uid://c4uhucciap8aa" path="res://assets/fonts/CinzelDecorative-Regular.ttf" id="8_font"]
 [ext_resource type="Texture2D" uid="uid://b64usdyfjttg3" path="res://assets/menu_gradient.svg" id="9_gradient"]
 [ext_resource type="PackedScene" uid="uid://dii87d57akic3" path="res://assets/quaternius_ultimate_space/Astronaut.glb" id="10_astronaut"]
-[ext_resource type="PackedScene" uid="uid://cgcwggu7cgftr" path="res://assets/quaternius_modular_scifi/glTF/Aliens/Alien_Scolitex.gltf" id="11_enemy"]
-[ext_resource type="PackedScene" uid="uid://c7d3vl0cxt8wo" path="res://assets/quaternius_modular_scifi/glTF/Platforms/Platform_DarkPlates.gltf" id="14_floor"]
+[ext_resource type="Texture2D" path="res://assets/naves_larzes/Boss_1_A_Medium.png" id="11_boss_a"]
 [ext_resource type="PackedScene" uid="uid://bw7vrisrbvoyd" path="res://assets/quaternius_modular_scifi/glTF/Props/Prop_Light_Floor.gltf" id="16_floor_light"]
 [ext_resource type="Texture2D" uid="uid://b3f1uqhkrv514" path="res://assets/kenney_skyboxes_space/Skyboxes/skybox-space-nebula.png" id="17_nebula"]
+[ext_resource type="Texture2D" path="res://assets/naves_larzes/Boss_1_B_Medium.png" id="18_boss_b"]
+[ext_resource type="Texture2D" path="res://assets/naves_larzes/Ship_1_A_Medium.png" id="19_ship_a"]
+[ext_resource type="Texture2D" path="res://assets/naves_larzes/Ship_2_C_Medium.png" id="20_ship_b"]
+[ext_resource type="PackedScene" path="res://assets/quaternius_ultimate_space/Rock Large.glb" id="22_rock"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nebula"]
 panorama = ExtResource("17_nebula")
@@ -24,9 +27,25 @@ sky_material = SubResource("PanoramaSkyMaterial_nebula")
 background_mode = 2
 sky = SubResource("Sky_bm2sk")
 ambient_light_source = 1
-ambient_light_color = Color(0.56, 0.67, 0.84, 1)
-ambient_light_energy = 1.4
+ambient_light_color = Color(0.72, 0.43, 0.48, 1)
+ambient_light_energy = 1.2
 tonemap_exposure = 1.2
+
+[sub_resource type="StandardMaterial3D" id="ArenaMaterial"]
+albedo_color = Color(0.09, 0.055, 0.095, 1)
+metallic = 0.12
+roughness = 0.88
+
+[sub_resource type="PlaneMesh" id="ArenaPlane"]
+size = Vector2(40, 40)
+
+[sub_resource type="StandardMaterial3D" id="PlanetMaterial"]
+albedo_color = Color(0.36, 0.12, 0.16, 1)
+roughness = 0.9
+
+[sub_resource type="SphereMesh" id="PlanetMesh"]
+radius = 1.0
+height = 2.0
 
 [node name="MainMenu" type="Control" unique_id=1847683811]
 layout_mode = 3
@@ -56,27 +75,75 @@ render_target_update_mode = 4
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1670812423]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
-light_color = Color(0.72, 0.82, 1, 1)
+light_color = Color(1, 0.66, 0.47, 1)
 light_energy = 2.0
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1385564580]
 environment = SubResource("Environment_uxa2c")
 
-[node name="SpaceFloor" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1764623219 instance=ExtResource("14_floor")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 1.8, -0.12, 0.3)
+[node name="LuzCalida" type="OmniLight3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 2.7, 1.4)
+light_color = Color(1, 0.35, 0.2, 1)
+light_energy = 2.5
+omni_range = 8.0
+
+[node name="Planeta" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+position = Vector3(6.1, 2.6, -17)
+scale = Vector3(2.2, 2.2, 2.2)
+mesh = SubResource("PlanetMesh")
+material_override = SubResource("PlanetMaterial")
+
+[node name="ArenaFloor" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+position = Vector3(1.8, -0.16, 0.3)
+mesh = SubResource("ArenaPlane")
+surface_material_override/0 = SubResource("ArenaMaterial")
 
 [node name="FloorLight" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=679839032 instance=ExtResource("16_floor_light")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, -0.05, 0.35)
 
 [node name="Astronaut" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=2014831115 instance=ExtResource("10_astronaut")]
-transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 1.6, 0, 0.5)
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 1.2, 0, 0.5)
+rotation = Vector3(0, 3.141593, 0)
 
-[node name="Enemigo" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1331686686 instance=ExtResource("11_enemy")]
-transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 4, -0.1, -1.6)
+[node name="JefeIzquierdo" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.45, -2.1)
+texture = ExtResource("11_boss_a")
+pixel_size = 0.011
+billboard = 1
+shaded = false
+
+[node name="JefeDerecho" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 1.35, -1.6)
+texture = ExtResource("18_boss_b")
+pixel_size = 0.011
+billboard = 1
+shaded = false
+
+[node name="NaveIzquierda" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.25, 2.7, -2.5)
+texture = ExtResource("19_ship_a")
+pixel_size = 0.01
+billboard = 1
+shaded = false
+rotation = Vector3(0, 0, -0.45)
+
+[node name="NaveDerecha" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 2.65, -2.8)
+texture = ExtResource("20_ship_b")
+pixel_size = 0.01
+billboard = 1
+shaded = false
+rotation = Vector3(0, 0, 0.42)
+
+[node name="RocaIzquierda" parent="SubViewportContainer/SubViewport/EscenarioFondo" instance=ExtResource("22_rock")]
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, -2.4, -0.1, 1.2)
+
+[node name="RocaDerecha" parent="SubViewportContainer/SubViewport/EscenarioFondo" instance=ExtResource("22_rock")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 5.15, -0.05, 1.0)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1431531116]
-transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 1.1, 1.6, 6.3)
+transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 1.1, 1.8, 7.1)
 
 [node name="MenuPanel" type="Control" parent="." unique_id=1971913646]
 layout_mode = 1
@@ -154,10 +221,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.9, 0.77, 0.57, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 16
 text = "JUGAR"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="ControlsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=662579487]
@@ -172,10 +240,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.9, 0.77, 0.57, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 16
 text = "CONTROLES"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="CreditsButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=132194761]
@@ -190,10 +259,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.9, 0.77, 0.57, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 16
 text = "CRÉDITOS"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="QuitButton" type="TextureButton" parent="MenuPanel/MarginContainer/VBoxContainer" unique_id=1155389651]
@@ -208,10 +278,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.91, 0.89, 0.78, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.9, 0.77, 0.57, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 16
 text = "SALIR"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="InfoDimmer" type="ColorRect" parent="." unique_id=1346477880]

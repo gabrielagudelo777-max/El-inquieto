@@ -86,8 +86,8 @@ func _animar_fondo() -> void:
 	if animacion:
 		animacion.play("CharacterArmature|Idle_Gun")
 	var movimiento := create_tween().set_loops()
-	movimiento.tween_property(astronauta, "rotation:y", PI + deg_to_rad(5), 2.5)
-	movimiento.tween_property(astronauta, "rotation:y", PI - deg_to_rad(5), 2.5)
+	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(-5), 2.5)
+	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(5), 2.5)
 	var movimiento_jefes := create_tween().set_loops()
 	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.75, 2.0)
 	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.7, 2.0)

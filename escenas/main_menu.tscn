@@ -104,7 +104,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, -0.05, 0.35)
 
 [node name="Astronaut" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=2014831115 instance=ExtResource("10_astronaut")]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 1.5, 0, 0.5)
-rotation = Vector3(0, 3.141593, 0)
+rotation = Vector3(0, 0, 0)
 
 [node name="JefeIzquierdo" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -2.8, 2.55, -2.8)
@@ -137,10 +137,10 @@ shaded = false
 rotation = Vector3(0, 0, 0.42)
 
 [node name="RocaIzquierda" parent="SubViewportContainer/SubViewport/EscenarioFondo" instance=ExtResource("22_rock")]
-transform = Transform3D(0.22, 0, 0, 0, 0.22, 0, 0, 0, 0.22, -5.0, -0.08, 0.4)
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -5.5, -0.08, 0.2)
 
 [node name="RocaDerecha" parent="SubViewportContainer/SubViewport/EscenarioFondo" instance=ExtResource("22_rock")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 5.7, -0.08, 0.4)
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 5.8, -0.08, 0.2)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=1431531116]
 transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 1.1, 2.0, 8.6)

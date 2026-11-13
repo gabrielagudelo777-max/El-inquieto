@@ -11,11 +11,26 @@ const PANEL_HUD = "res://assets/1. Free Hologram Interface Wenrexa/1. Free Holog
 const TIPOGRAFIA = "res://assets/fonts/CinzelDecorative-Regular.ttf"
 const SCRIPT_JUGADOR = preload("res://juan/jugador_batalla.gd")
 const SCRIPT_ALIEN = preload("res://juan/enemigo_batalla.gd")
+const SCRIPT_DIRECTOR = preload("res://juan/director_campana.gd")
+const ESCENA_UI_CAMPANA = preload("res://juan/ui_campana.tscn")
+const RUTAS_OLEADAS := [
+	"res://juan/oleadas/oleada_01.tres",
+	"res://juan/oleadas/oleada_02.tres",
+	"res://juan/oleadas/oleada_03.tres",
+	"res://juan/oleadas/oleada_04.tres",
+	"res://juan/oleadas/oleada_05.tres",
+	"res://juan/oleadas/oleada_06_jefe.tres",
+]
 
 var _jugador: CharacterBody3D
 var _etiqueta_enemigos: Label
 var _barra_integridad: ProgressBar
 var _etiqueta_mensaje: Label
+var _director: DirectorCampana
+var _configuracion_oleada: OleadaConfig
+var _enemigos_por_aparecer := 0
+var _temporizador_aparicion := 0.0
+var _escena_aliens: PackedScene
 
 
 func _ready() -> void:
@@ -23,12 +38,18 @@ func _ready() -> void:
 	_crear_entorno()
 	_crear_arena()
 	_crear_jugador()
-	_crear_enemigos()
+	_crear_campana()
 	_crear_camara()
 	_crear_interfaz()
 
 
 func _process(_delta: float) -> void:
+	if _enemigos_por_aparecer > 0 and _director != null and _director.estado == DirectorCampana.Estado.COMBATE:
+		_temporizador_aparicion -= _delta
+		if _temporizador_aparicion <= 0.0:
+			_aparecer_enemigo()
+			_enemigos_por_aparecer -= 1
+			_temporizador_aparicion = _configuracion_oleada.intervalo_aparicion
 	if is_instance_valid(_etiqueta_enemigos):
 		_etiqueta_enemigos.text = "AMENAZAS  %02d" % get_tree().get_nodes_in_group("enemigos").size()
 	if is_instance_valid(_barra_integridad) and is_instance_valid(_jugador):
@@ -380,27 +401,49 @@ func _crear_jugador() -> void:
 	add_child(_jugador)
 
 
-func _crear_enemigos() -> void:
-	var posiciones := [Vector3(-4.1, 0.0, -5.9), Vector3(0.0, 0.0, -7.2), Vector3(4.1, 0.0, -5.9), Vector3(-6.8, 0.0, 1.0), Vector3(6.8, 0.0, 1.0)]
-	var escena_aliens := load(ALIEN) as PackedScene
-	for indice in posiciones.size():
-		var alien := CharacterBody3D.new()
-		alien.name = "Amenaza_%02d" % (indice + 1)
-		alien.position = posiciones[indice]
-		alien.set_script(SCRIPT_ALIEN)
-		var colision := CollisionShape3D.new()
-		var capsula := CapsuleShape3D.new()
-		capsula.radius = 0.48
-		capsula.height = 1.5
-		colision.shape = capsula
-		colision.position.y = 0.75
-		alien.add_child(colision)
-		if escena_aliens:
-			var modelo := escena_aliens.instantiate()
-			modelo.name = "ModeloAlien"
-			modelo.scale = Vector3.ONE * 0.55
-			alien.add_child(modelo)
-		add_child(alien)
+func _crear_campana() -> void:
+	_director = SCRIPT_DIRECTOR.new() as DirectorCampana
+	_director.name = "DirectorCampana"
+	for ruta in RUTAS_OLEADAS:
+		var configuracion := load(ruta) as OleadaConfig
+		if configuracion != null:
+			_director.oleadas.append(configuracion)
+	add_child(_director)
+	_director.oleada_iniciada.connect(_iniciar_oleada)
+	_escena_aliens = load(ALIEN) as PackedScene
+	var interfaz := ESCENA_UI_CAMPANA.instantiate()
+	add_child(interfaz)
+	_director.comenzar_campana()
+
+
+func _iniciar_oleada(_indice: int, configuracion: OleadaConfig) -> void:
+	_configuracion_oleada = configuracion
+	_enemigos_por_aparecer = configuracion.cantidad_enemigos
+	_temporizador_aparicion = 0.0
+
+
+func _aparecer_enemigo() -> void:
+	var alien := CharacterBody3D.new()
+	var numero := _configuracion_oleada.cantidad_enemigos - _enemigos_por_aparecer + 1
+	alien.name = "Amenaza_%02d_%02d" % [_director.indice_oleada + 1, numero]
+	var carril := (numero - 1) % 5
+	var carriles_x := [-7.0, -3.5, 0.0, 3.5, 7.0]
+	alien.position = Vector3(carriles_x[carril], 0.0, -7.2 - float((numero - 1) / 5) * 1.2)
+	alien.set_script(SCRIPT_ALIEN)
+	alien.call("configurar_oleada", _configuracion_oleada.rapidez_formacion, _configuracion_oleada.intervalo_disparo, _configuracion_oleada.puntos_por_enemigo, _configuracion_oleada.es_jefe)
+	var colision := CollisionShape3D.new()
+	var capsula := CapsuleShape3D.new()
+	capsula.radius = 0.48 if not _configuracion_oleada.es_jefe else 0.78
+	capsula.height = 1.5 if not _configuracion_oleada.es_jefe else 2.2
+	colision.shape = capsula
+	colision.position.y = capsula.height * 0.5
+	alien.add_child(colision)
+	if _escena_aliens:
+		var modelo := _escena_aliens.instantiate()
+		modelo.name = "ModeloAlien"
+		modelo.scale = Vector3.ONE * (0.55 if not _configuracion_oleada.es_jefe else 0.9)
+		alien.add_child(modelo)
+	add_child(alien)
 
 
 func _crear_camara() -> void:

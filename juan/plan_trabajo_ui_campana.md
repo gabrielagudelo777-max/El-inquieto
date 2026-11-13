@@ -9,7 +9,7 @@ El pulido de animaciones del jugador y los enemigos, y el ajuste del cooldown de
 ## Orden de ejecución
 
 1. **Integrar la campaña en la arena** — conectar `DirectorCampana`, las seis configuraciones existentes, aparición escalonada de enemigos, derrota, victoria, pausa e intermisiones. Mantener el combate y la arena actuales como base.
-2. **Completar el HUD de la Fase 1** — mostrar vidas, integridad/escudo, puntaje, multiplicador, oleada, tiempo transcurrido y estado/vida del jefe. La cadencia del arma se leerá desde el jugador; su balance lo define Jhon.
+2. **Completar el HUD de la Fase 1** — mostrar vidas, integridad/escudo, puntaje, multiplicador, oleada, tiempo transcurrido y estado/vida del jefe. El cooldown del arma queda bajo responsabilidad de Jhon.
 3. **Cerrar navegación y resultados** — alta de récord en el menú, transiciones de inicio, pausa, derrota, victoria y reinicio; definir la elección de ruta de la tercera oleada según la matriz.
 4. **Consolidar el balance** — crear recursos editables de campaña, alinear cantidades, intervalos, puntos y tiempos de intermisión con `balance_campana.md`, y documentar los valores de partida.
 5. **Revisión de integración** — revisar las escenas conectadas y documentar pendientes. No se marcará una función como terminada solo porque exista un script o una escena aislada.
@@ -23,15 +23,23 @@ El pulido de animaciones del jugador y los enemigos, y el ajuste del cooldown de
 - El HUD de campaña contempla vidas, puntaje, récord y oleada, pero está desconectado y no incluye todos los indicadores de Fase 1.
 - No se encontraron pantallas de loadout, tienda, perfil ni logros.
 
-## Decisión pendiente antes de implementar el encuentro de jefes
+## Avance
+
+- **Implementado, falta revisión manual:** la arena instancia el director, carga los seis recursos, inicia la campaña, aparece enemigos según la oleada, registra puntos por baja y pierde vidas al agotarse la integridad. El HUD de campaña y las pantallas de flujo ya se insertan en la arena.
+- **Implementado, falta revisión manual:** el director lleva el tiempo transcurrido y el HUD lo muestra en minutos y segundos. Los intervalos de ataque ahora respetan la configuración de la oleada después de cada impacto.
+- El jefe final actual sigue siendo una variante grande del enemigo base; no se le ha creado un patrón o una presentación distinta.
+
+## Decisiones pendientes
 
 La tabla pide barras para tres jefes en la Fase 1, mientras que el balance actual define una sola oleada final llamada «El Asediador». Antes de construir esos encuentros hay que aclarar si son tres barras simultáneas, tres jefes en oleadas distintas o una barra para el jefe de la vertical slice y las otras dos como expansión.
 
+La tabla también pide un multiplicador de puntaje, pero no define cómo aumenta, cuánto dura una racha ni cuál es su máximo. No se fijará una fórmula sin esa decisión.
+
 ## Seguimiento
 
-- [ ] Integrar director y aparición de oleadas en la arena.
-- [ ] Conectar bajas, daño, vidas, derrota y victoria.
-- [ ] Completar HUD de Fase 1.
+- [x] Conectar director y aparición de oleadas en la arena (revisión manual pendiente).
+- [x] Conectar bajas, daño, vidas, derrota y victoria (revisión manual pendiente).
+- [ ] Completar HUD de Fase 1; tiempo ya implementado, faltan integridad/escudo, multiplicador y barras de jefe.
 - [ ] Incorporar récord y flujo de pausa/resultados en navegación.
 - [ ] Consolidar balance en recursos editables.
 - [ ] Revisar y cerrar pendientes de Fase 1.

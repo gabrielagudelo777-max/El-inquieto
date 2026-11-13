@@ -5,6 +5,7 @@ extends CharacterBody3D
 
 var _jugador: CharacterBody3D
 var _tiempo_ataque := 0.0
+var _intervalo_ataque := 1.0
 var _puntos_recompensa := 100
 var _es_jefe := false
 var _fue_derrotado := false
@@ -12,6 +13,7 @@ var _fue_derrotado := false
 
 func configurar_oleada(rapidez: float, intervalo_ataque: float, puntos: int, es_jefe: bool) -> void:
 	velocidad = rapidez
+	_intervalo_ataque = intervalo_ataque
 	_tiempo_ataque = intervalo_ataque
 	_puntos_recompensa = puntos
 	_es_jefe = es_jefe
@@ -43,7 +45,7 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 		if _tiempo_ataque <= 0.0 and _jugador.has_method("recibir_dano"):
 			_jugador.call("recibir_dano", 12.0)
-			_tiempo_ataque = 1.0
+			_tiempo_ataque = _intervalo_ataque
 
 
 func recibir_dano(cantidad: int = 1) -> void:

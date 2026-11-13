@@ -12,6 +12,7 @@ signal vidas_cambiadas(actuales: int)
 signal oleada_cambiada(indice: int, total: int, nombre: String, es_jefe: bool)
 signal oleada_iniciada(indice: int, configuracion: OleadaConfig)
 signal cuenta_regresiva(segundos: int)
+signal tiempo_cambiado(segundos: int)
 signal campana_finalizada(victoria: bool, puntaje: int, record: int)
 
 const ARCHIVO_RECORD := "user://el_inquieto_record.cfg"
@@ -28,8 +29,10 @@ var vidas: int = 3
 var indice_oleada: int = -1
 var enemigos_por_derrotar: int = 0
 var tiempo_estado: float = 0.0
+var tiempo_transcurrido: float = 0.0
 var _estado_antes_de_pausar: Estado = Estado.MENU
 var _ultimo_segundo_emitido: int = -1
+var _ultimo_segundo_partida: int = -1
 
 
 func _ready() -> void:
@@ -43,6 +46,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if get_tree().paused:
 		return
+	if estado != Estado.MENU and estado != Estado.DERROTA and estado != Estado.VICTORIA:
+		tiempo_transcurrido += delta
+		var segundo_partida := floori(tiempo_transcurrido)
+		if segundo_partida != _ultimo_segundo_partida:
+			_ultimo_segundo_partida = segundo_partida
+			tiempo_cambiado.emit(segundo_partida)
 	match estado:
 		Estado.INTRO:
 			tiempo_estado = maxf(tiempo_estado - delta, 0.0)
@@ -72,6 +81,9 @@ func comenzar_campana() -> void:
 	vidas = vidas_iniciales
 	indice_oleada = -1
 	enemigos_por_derrotar = 0
+	tiempo_transcurrido = 0.0
+	_ultimo_segundo_partida = -1
+	tiempo_cambiado.emit(0)
 	_emitir_datos_iniciales()
 	tiempo_estado = duracion_intro
 	_cambiar_estado(Estado.INTRO if duracion_intro > 0.0 else Estado.COMBATE)
@@ -149,6 +161,9 @@ func volver_al_menu() -> void:
 	puntaje = 0
 	indice_oleada = -1
 	enemigos_por_derrotar = 0
+	tiempo_transcurrido = 0.0
+	_ultimo_segundo_partida = -1
+	tiempo_cambiado.emit(0)
 	_emitir_datos_iniciales()
 	_cambiar_estado(Estado.MENU)
 

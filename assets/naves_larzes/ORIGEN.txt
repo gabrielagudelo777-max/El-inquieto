@@ -1,0 +1,8 @@
+Naves para el combate de El Inquieto
+
+Pack: 2D Space Shooter Sprites, de Larzes
+Pagina: https://larzes.itch.io/2d-space-shooter-sprites
+
+Esta carpeta incluye las imagenes medianas de naves, enemigos, jefes y misiles.
+El autor permite usarlas gratis en proyectos personales o comerciales y modificarlas.
+No se pueden revender ni publicar como un pack de recursos independiente.

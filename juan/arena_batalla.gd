@@ -409,9 +409,9 @@ func _crear_camara() -> void:
 	camara.position = Vector3(0.0, 17.5, 19.0)
 	camara.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camara.size = 23.5
+	add_child(camara)
 	camara.look_at(Vector3(0.0, 0.0, 0.0), Vector3.UP)
 	camara.current = true
-	add_child(camara)
 
 
 func _crear_interfaz() -> void:

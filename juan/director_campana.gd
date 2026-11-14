@@ -7,15 +7,13 @@ class_name DirectorCampana
 enum Estado { MENU, INTRO, INTRO_JEFE, COMBATE, INTERMISION, PAUSA, DERROTA, VICTORIA }
 
 signal estado_cambiado(nuevo_estado: int)
-signal puntaje_cambiado(actual: int, record: int)
+signal puntaje_cambiado(actual: int)
 signal vidas_cambiadas(actuales: int)
 signal oleada_cambiada(indice: int, total: int, nombre: String, es_jefe: bool)
 signal oleada_iniciada(indice: int, configuracion: OleadaConfig)
 signal cuenta_regresiva(segundos: int)
 signal tiempo_cambiado(segundos: int)
-signal campana_finalizada(victoria: bool, puntaje: int, record: int)
-
-const ARCHIVO_RECORD := "user://el_inquieto_record.cfg"
+signal campana_finalizada(victoria: bool, puntaje: int)
 
 @export_group("Campaña")
 @export var oleadas: Array[OleadaConfig] = []
@@ -24,7 +22,6 @@ const ARCHIVO_RECORD := "user://el_inquieto_record.cfg"
 
 var estado: Estado = Estado.MENU
 var puntaje: int = 0
-var record: int = 0
 var vidas: int = 3
 var indice_oleada: int = -1
 var enemigos_por_derrotar: int = 0
@@ -38,7 +35,6 @@ var _ultimo_segundo_partida: int = -1
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("director_campana")
-	record = _cargar_record()
 	vidas = vidas_iniciales
 	_emitir_datos_iniciales()
 
@@ -211,10 +207,7 @@ func _sumar_puntos(cantidad: int) -> void:
 	if cantidad <= 0:
 		return
 	puntaje += cantidad
-	if puntaje > record:
-		record = puntaje
-		_guardar_record()
-	puntaje_cambiado.emit(puntaje, record)
+	puntaje_cambiado.emit(puntaje)
 
 
 func _finalizar(victoria: bool) -> void:
@@ -222,7 +215,7 @@ func _finalizar(victoria: bool) -> void:
 		return
 	get_tree().paused = true
 	_cambiar_estado(Estado.VICTORIA if victoria else Estado.DERROTA)
-	campana_finalizada.emit(victoria, puntaje, record)
+	campana_finalizada.emit(victoria, puntaje)
 
 
 func _cambiar_estado(nuevo_estado: Estado) -> void:
@@ -233,20 +226,5 @@ func _cambiar_estado(nuevo_estado: Estado) -> void:
 
 
 func _emitir_datos_iniciales() -> void:
-	puntaje_cambiado.emit(puntaje, record)
+	puntaje_cambiado.emit(puntaje)
 	vidas_cambiadas.emit(vidas)
-
-
-func _cargar_record() -> int:
-	var archivo := ConfigFile.new()
-	if archivo.load(ARCHIVO_RECORD) != OK:
-		return 0
-	return maxi(int(archivo.get_value("campana", "record", 0)), 0)
-
-
-func _guardar_record() -> void:
-	var archivo := ConfigFile.new()
-	archivo.set_value("campana", "record", record)
-	var error := archivo.save(ARCHIVO_RECORD)
-	if error != OK:
-		push_warning("No se pudo guardar el récord local: %s" % error_string(error))

@@ -118,13 +118,6 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Kicker" type="Label" parent="Overlay/Centro/Panel/Contenido"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.31, 0.58, 1)
-theme_override_font_sizes/font_size = 14
-text = "PROTOCOLO DE DEFENSA // PC"
-horizontal_alignment = 1
-
 [node name="Titulo" type="Label" parent="Overlay/Centro/Panel/Contenido"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.83, 0.61, 1)

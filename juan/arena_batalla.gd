@@ -25,7 +25,6 @@ const RUTAS_OLEADAS := [
 var _jugador: CharacterBody3D
 var _etiqueta_enemigos: Label
 var _barra_integridad: ProgressBar
-var _etiqueta_mensaje: Label
 var _director: DirectorCampana
 var _configuracion_oleada: OleadaConfig
 var _enemigos_por_aparecer := 0
@@ -59,18 +58,6 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_tree().change_scene_to_file("res://escenas/main_menu.tscn")
-
-
-func mostrar_mensaje(texto: String) -> void:
-	if not is_instance_valid(_etiqueta_mensaje):
-		return
-	_etiqueta_mensaje.text = texto
-	_etiqueta_mensaje.visible = true
-	var temporizador := get_tree().create_timer(2.2)
-	temporizador.timeout.connect(func() -> void:
-		if is_instance_valid(_etiqueta_mensaje):
-			_etiqueta_mensaje.visible = false
-	)
 
 
 func _crear_entorno() -> void:
@@ -513,11 +500,6 @@ func _crear_interfaz() -> void:
 	relleno_barra.corner_radius_bottom_right = 4
 	_barra_integridad.add_theme_stylebox_override("fill", relleno_barra)
 	panel_integridad.add_child(_barra_integridad)
-
-	_etiqueta_mensaje = _crear_etiqueta(capa, "", Vector2(350, 150), Vector2(580, 48), fuente, 24, Color(0.55, 0.86, 1.0))
-	_etiqueta_mensaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_etiqueta_mensaje.visible = false
-
 
 func _crear_panel(parent: Node, rectangulo: Rect2, textura: Texture2D) -> NinePatchRect:
 	var panel := NinePatchRect.new()

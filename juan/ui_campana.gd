@@ -7,9 +7,7 @@ class_name UICampana
 @onready var lbl_vidas: Label = $HUD/Barra/Fila/Vidas
 @onready var lbl_oleada: Label = $HUD/Barra/Fila/Oleada
 @onready var lbl_puntaje: Label = $HUD/Barra/Fila/Puntaje
-@onready var lbl_record: Label = $HUD/Barra/Fila/Record
 @onready var lbl_tiempo: Label = $HUD/Barra/Fila/Tiempo
-@onready var lbl_estado: Label = $HUD/Centro/EstadoCombate
 @onready var overlay: Control = $Overlay
 @onready var lbl_titulo: Label = $Overlay/Centro/Panel/Contenido/Titulo
 @onready var lbl_detalle: Label = $Overlay/Centro/Panel/Contenido/Detalle
@@ -65,26 +63,20 @@ func _actualizar_estado(nuevo: int) -> void:
 	var mostrar_overlay := true
 	btn_menu.hide()
 	btn_principal.show()
-	lbl_estado.text = ""
 	match nuevo:
 		DirectorCampana.Estado.MENU:
 			lbl_titulo.text = "EL INQUIETO"
 			lbl_detalle.text = "ASALTO // PROTOTIPO PARA PC\n\nSobrevive a las formaciones. Muévete, dispara y encuentra el momento para esquivar.\n\nWASD o flechas: mover   ·   Espacio: disparar\nCtrl: correr   ·   Shift: dash   ·   Esc: pausa"
 			btn_principal.text = "INICIAR CAMPAÑA"
 		DirectorCampana.Estado.INTRO:
-			lbl_titulo.text = "SEÑAL DE ALERTA"
-			lbl_detalle.text = "Lectura de movimiento enemigo detectada…"
-			btn_principal.text = "SALTAR INTRO"
+			mostrar_overlay = false
 			_reproducir_intro()
 		DirectorCampana.Estado.INTRO_JEFE:
-			lbl_titulo.text = "AMENAZA DE ALTA TENDENCIA"
-			lbl_detalle.text = "Una figura domina la formación."
-			btn_principal.text = "SALTAR PRESENTACIÓN"
+			mostrar_overlay = false
 			var config: OleadaConfig = director.oleadas[director.indice_oleada]
 			_presentar_jefe(config.nombre)
 		DirectorCampana.Estado.COMBATE:
 			mostrar_overlay = false
-			lbl_estado.text = ""
 		DirectorCampana.Estado.INTERMISION:
 			lbl_titulo.text = "OLEADA COMPLETADA"
 			lbl_detalle.text = "Recupera el aliento."
@@ -115,9 +107,8 @@ func _overlay_actualizar(mostrar: bool) -> void:
 	hud.visible = estado_actual != DirectorCampana.Estado.MENU
 
 
-func _actualizar_puntaje(actual: int, record: int) -> void:
+func _actualizar_puntaje(actual: int, _record: int) -> void:
 	lbl_puntaje.text = "PUNTAJE  %06d" % actual
-	lbl_record.text = "RÉCORD  %06d" % record
 
 
 func _actualizar_vidas(actuales: int) -> void:
@@ -140,11 +131,11 @@ func _actualizar_tiempo(segundos: int) -> void:
 	lbl_tiempo.text = "TIEMPO  %02d:%02d" % [minutos, resto]
 
 
-func _mostrar_resultado(victoria: bool, puntaje: int, record: int) -> void:
+func _mostrar_resultado(victoria: bool, puntaje: int, _record: int) -> void:
 	if victoria:
-		lbl_detalle.text = "Campaña completada\nPuntaje: %06d   ·   Récord: %06d" % [puntaje, record]
+		lbl_detalle.text = "Campaña completada\nPuntaje: %06d" % puntaje
 	else:
-		lbl_detalle.text = "Puntaje: %06d   ·   Récord: %06d" % [puntaje, record]
+		lbl_detalle.text = "Puntaje: %06d" % puntaje
 
 
 func _al_pulsar_principal() -> void:

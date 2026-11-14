@@ -52,7 +52,7 @@ func _conectar_director() -> void:
 	director.cuenta_regresiva.connect(_actualizar_cuenta_regresiva)
 	director.tiempo_cambiado.connect(_actualizar_tiempo)
 	director.campana_finalizada.connect(_mostrar_resultado)
-	_actualizar_puntaje(director.puntaje, director.record)
+	_actualizar_puntaje(director.puntaje)
 	_actualizar_vidas(director.vidas)
 	_actualizar_tiempo(floori(director.tiempo_transcurrido))
 	_actualizar_estado(director.estado)
@@ -107,7 +107,7 @@ func _overlay_actualizar(mostrar: bool) -> void:
 	hud.visible = estado_actual != DirectorCampana.Estado.MENU
 
 
-func _actualizar_puntaje(actual: int, _record: int) -> void:
+func _actualizar_puntaje(actual: int) -> void:
 	lbl_puntaje.text = "PUNTAJE  %06d" % actual
 
 
@@ -131,7 +131,7 @@ func _actualizar_tiempo(segundos: int) -> void:
 	lbl_tiempo.text = "TIEMPO  %02d:%02d" % [minutos, resto]
 
 
-func _mostrar_resultado(victoria: bool, puntaje: int, _record: int) -> void:
+func _mostrar_resultado(victoria: bool, puntaje: int) -> void:
 	if victoria:
 		lbl_detalle.text = "Campaña completada\nPuntaje: %06d" % puntaje
 	else:

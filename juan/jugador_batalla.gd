@@ -52,11 +52,6 @@ func recibir_dano(cantidad: float) -> void:
 		return
 	integridad = maxf(0.0, integridad - cantidad)
 	_invulnerabilidad = 0.55
-	var arena := get_tree().get_first_node_in_group("control_arena")
-	if arena and arena.has_method("mostrar_mensaje"):
-		arena.call("mostrar_mensaje", "IMPACTO EN EL TRAJE")
-	if integridad <= 0.0 and arena and arena.has_method("mostrar_mensaje"):
-		arena.call("mostrar_mensaje", "INTEGRIDAD AGOTADA  //  ESC PARA VOLVER")
 	if integridad <= 0.0:
 		if _director == null:
 			_conectar_director()
@@ -64,8 +59,6 @@ func recibir_dano(cantidad: float) -> void:
 			_director.recibir_impacto()
 			if _director.vidas > 0:
 				integridad = 100.0
-				if arena and arena.has_method("mostrar_mensaje"):
-					arena.call("mostrar_mensaje", "TRAJE RESTAURADO  //  VIDAS %d" % _director.vidas)
 
 
 func _conectar_director() -> void:

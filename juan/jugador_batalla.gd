@@ -35,6 +35,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("dash") and direccion.length_squared() > 0.0 and _tiempo_dash <= 0.0:
 		_direccion_dash = direccion
 		_tiempo_dash = 0.18
+		_invulnerabilidad = 0.18
 	if _tiempo_dash > 0.0:
 		velocity.x = _direccion_dash.x * velocidad_dash
 		velocity.z = _direccion_dash.z * velocidad_dash
@@ -43,7 +44,11 @@ func _physics_process(delta: float) -> void:
 		velocity.z = direccion.z * velocidad_movimiento
 	move_and_slide()
 	if _animacion:
-		var animacion := "CharacterArmature|Run_Gun" if direccion.length_squared() > 0.0 else "CharacterArmature|Idle_Gun"
+		var animacion := "CharacterArmature|Idle_Gun"
+		if _tiempo_dash > 0.0:
+			animacion = "CharacterArmature|Duck"
+		elif direccion.length_squared() > 0.0:
+			animacion = "CharacterArmature|Run_Gun"
 		if _animacion.current_animation != animacion:
 			_animacion.play(animacion)
 	var posicion := global_position

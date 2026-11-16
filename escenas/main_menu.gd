@@ -70,24 +70,63 @@ func _animar_boton(button: Control, escala: float) -> void:
 
 
 func _animar_fondo() -> void:
-	var astronauta := $SubViewportContainer/SubViewport/EscenarioFondo/Astronaut as Node3D
-	var jefe_izquierdo := $SubViewportContainer/SubViewport/EscenarioFondo/JefeIzquierdo as Node3D
-	var jefe_derecho := $SubViewportContainer/SubViewport/EscenarioFondo/JefeDerecho as Node3D
-	var nave_derecha := $SubViewportContainer/SubViewport/EscenarioFondo/NaveDerecha as Node3D
-	var animacion := astronauta.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if animacion:
-		animacion.play("CharacterArmature|Idle_Gun")
+	var portada := $PortadaFondo as TextureRect
 	var movimiento := create_tween().set_loops()
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(-5), 2.5)
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(5), 2.5)
-	var movimiento_jefes := create_tween().set_loops()
-	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.75, 2.0)
-	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.7, 2.0)
-	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.55, 2.0)
-	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.5, 2.0)
-	var movimiento_nave := create_tween().set_loops()
-	movimiento_nave.tween_property(nave_derecha, "position:y", 2.85, 2.2)
-	movimiento_nave.tween_property(nave_derecha, "position:y", 2.65, 2.2)
+	movimiento.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	movimiento.tween_property(portada, "scale", Vector2(1.035, 1.035), 8.0).from(Vector2(1.015, 1.015))
+	movimiento.tween_property(portada, "scale", Vector2(1.015, 1.015), 8.0)
+	_crear_ambiente_portada()
+
+
+func _crear_ambiente_portada() -> void:
+	var gradiente := Gradient.new()
+	gradiente.set_color(0, Color.WHITE)
+	gradiente.set_color(1, Color(1, 1, 1, 0))
+	var textura := GradientTexture2D.new()
+	textura.gradient = gradiente
+	textura.fill = GradientTexture2D.FILL_RADIAL
+	textura.width = 96
+	textura.height = 96
+
+	for posicion in [Vector2(568, 211), Vector2(681, 211)]:
+		var luz := PointLight2D.new()
+		luz.texture = textura
+		luz.texture_scale = 0.65
+		luz.color = Color(0.48, 1.0, 0.12)
+		luz.energy = 0.75
+		luz.position = posicion
+		add_child(luz)
+		move_child(luz, $MenuPanel.get_index())
+		var pulso := create_tween().set_loops()
+		pulso.tween_property(luz, "energy", 1.05, 1.4)
+		pulso.tween_property(luz, "energy", 0.65, 1.4)
+
+	_crear_particulas(textura, Color(0.45, 1.0, 0.18, 0.7), Vector2(870, 390), 24)
+	_crear_particulas(textura, Color(1.0, 0.38, 0.12, 0.65), Vector2(1080, 470), 18)
+
+
+func _crear_particulas(textura: Texture2D, color: Color, posicion: Vector2, cantidad: int) -> void:
+	var particulas := GPUParticles2D.new()
+	particulas.position = posicion
+	particulas.amount = cantidad
+	particulas.lifetime = 7.0
+	particulas.preprocess = 3.0
+	particulas.visibility_rect = Rect2(-420, -350, 840, 700)
+	particulas.texture = textura
+	var movimiento := ParticleProcessMaterial.new()
+	movimiento.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	movimiento.emission_box_extents = Vector3(260, 300, 0)
+	movimiento.direction = Vector3(-0.1, -1, 0)
+	movimiento.spread = 18.0
+	movimiento.gravity = Vector3(0, -3, 0)
+	movimiento.initial_velocity_min = 5.0
+	movimiento.initial_velocity_max = 14.0
+	movimiento.scale_min = 0.05
+	movimiento.scale_max = 0.13
+	movimiento.color = color
+	particulas.process_material = movimiento
+	add_child(particulas)
+	move_child(particulas, $MenuPanel.get_index())
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

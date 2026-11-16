@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cg65kk01l08r4" path="res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Button 1/Button Active.png" id="7_active"]
 [ext_resource type="FontFile" uid="uid://c4uhucciap8aa" path="res://assets/fonts/CinzelDecorative-Regular.ttf" id="8_font"]
 [ext_resource type="Texture2D" uid="uid://b64usdyfjttg3" path="res://assets/menu_gradient.svg" id="9_gradient"]
-[ext_resource type="PackedScene" uid="uid://dii87d57akic3" path="res://assets/quaternius_ultimate_space/Astronaut.glb" id="10_astronaut"]
+[ext_resource type="Texture2D" path="res://assets/personaje_16bit/Idle.png" id="10_personaje"]
 [ext_resource type="Texture2D" path="res://assets/naves_larzes/Boss_1_A_Medium.png" id="11_boss_a"]
 [ext_resource type="PackedScene" uid="uid://bw7vrisrbvoyd" path="res://assets/quaternius_modular_scifi/glTF/Props/Prop_Light_Floor.gltf" id="16_floor_light"]
 [ext_resource type="Texture2D" uid="uid://b3f1uqhkrv514" path="res://assets/kenney_skyboxes_space/Skyboxes/skybox-space-nebula.png" id="17_nebula"]
@@ -102,9 +102,15 @@ surface_material_override/0 = SubResource("ArenaMaterial")
 [node name="FloorLight" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=679839032 instance=ExtResource("16_floor_light")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, -0.05, 0.35)
 
-[node name="Astronaut" parent="SubViewportContainer/SubViewport/EscenarioFondo" unique_id=2014831115 instance=ExtResource("10_astronaut")]
-transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 1.5, 0, 0.5)
-rotation = Vector3(0, 0, 0)
+[node name="VigiaCarmesi" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
+position = Vector3(1.5, 0.72, 0.5)
+scale = Vector3(1.25, 1.25, 1.25)
+texture = ExtResource("10_personaje")
+pixel_size = 0.024
+billboard = 1
+shaded = false
+region_enabled = true
+region_rect = Rect2(0, 128, 64, 64)
 
 [node name="JefeIzquierdo" type="Sprite3D" parent="SubViewportContainer/SubViewport/EscenarioFondo"]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -2.8, 2.55, -2.8)

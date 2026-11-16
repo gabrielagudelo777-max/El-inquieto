@@ -70,16 +70,13 @@ func _animar_boton(button: Control, escala: float) -> void:
 
 
 func _animar_fondo() -> void:
-	var astronauta := $SubViewportContainer/SubViewport/EscenarioFondo/Astronaut as Node3D
+	var heroe := $SubViewportContainer/SubViewport/EscenarioFondo/VigiaCarmesi as Node3D
 	var jefe_izquierdo := $SubViewportContainer/SubViewport/EscenarioFondo/JefeIzquierdo as Node3D
 	var jefe_derecho := $SubViewportContainer/SubViewport/EscenarioFondo/JefeDerecho as Node3D
 	var nave_derecha := $SubViewportContainer/SubViewport/EscenarioFondo/NaveDerecha as Node3D
-	var animacion := astronauta.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if animacion:
-		animacion.play("CharacterArmature|Idle_Gun")
 	var movimiento := create_tween().set_loops()
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(-5), 2.5)
-	movimiento.tween_property(astronauta, "rotation:y", deg_to_rad(5), 2.5)
+	movimiento.tween_property(heroe, "position:y", 0.84, 1.4)
+	movimiento.tween_property(heroe, "position:y", 0.72, 1.4)
 	var movimiento_jefes := create_tween().set_loops()
 	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.75, 2.0)
 	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.7, 2.0)

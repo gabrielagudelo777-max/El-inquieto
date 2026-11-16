@@ -1,9 +1,25 @@
 extends Node2D
 
-const TILE_GRAFICO = preload("res://assets/arena_isometrica_tiles.svg")
+const TILE_GRAFICO = preload("res://assets/arena_isometrica/suelos_hades/tiles_piso.png")
 const RUINA_CIRCULAR = preload("res://assets/arena_isometrica/ruinas/01.png")
 const RUINA_MURO = preload("res://assets/arena_isometrica/ruinas/04.png")
 const RUINA_PILAR = preload("res://assets/arena_isometrica/ruinas/09.png")
+const RUINAS = [
+	preload("res://assets/arena_isometrica/ruinas_completo/02.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/03.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/06.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/08.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/10.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/12.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/14.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/16.png"),
+	preload("res://assets/arena_isometrica/ruinas_completo/19.png"),
+]
+const PORTAL_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Doors/portal 1.png")
+const BRASERO_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Objects/Fire Shrine.png")
+const PILAR_BASE_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Pillar/Base.png")
+const PILAR_MEDIO_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Pillar/mid.png")
+const RESTOS_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Objects/Remains/Remains 1.png")
 const GRIETA_ROJA = preload("res://assets/arena_isometrica/grietas/Dark Fantasy Isometric Tiles (CC-BY 4.0 - Of Far Different Nature)/OFDN Isometric Tile 09.png")
 const ALTAR_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Altar/Altar 1.png")
 const SCRIPT_JUGADOR = preload("res://juan/jugador_isometrico.gd")
@@ -35,6 +51,7 @@ var _zona: Label
 var _oleada: Label
 var _integridad: ProgressBar
 var _luz_nucleo: PointLight2D
+var _aro_nucleo: Node2D
 var _textura_luz: Texture2D
 
 
@@ -56,7 +73,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if is_instance_valid(_luz_nucleo):
-		_luz_nucleo.energy = 4.0 + sin(Time.get_ticks_msec() / 1000.0 * 2.0) * 0.35
+		_luz_nucleo.energy = 2.5 + sin(Time.get_ticks_msec() / 1000.0 * 1.6) * 0.2
+	if is_instance_valid(_aro_nucleo):
+		_aro_nucleo.rotation += delta * 0.08
 	if _director != null and _director.estado == DirectorCampana.Estado.COMBATE and _enemigos_restantes > 0:
 		_reloj_aparicion -= delta
 		if _reloj_aparicion <= 0.0:
@@ -73,13 +92,13 @@ func _crear_ambiente() -> void:
 	fondo.z_index = -20
 	add_child(fondo)
 	var sombra := CanvasModulate.new()
-	sombra.color = Color(0.55, 0.60, 0.54)
+	sombra.color = Color(0.80, 0.74, 0.66)
 	add_child(sombra)
 	var entorno := Environment.new()
 	entorno.background_mode = Environment.BG_COLOR
 	entorno.background_color = Color(0.055, 0.035, 0.065)
 	entorno.glow_enabled = true
-	entorno.glow_intensity = 0.8
+	entorno.glow_intensity = 0.38
 	var mundo := WorldEnvironment.new()
 	mundo.environment = entorno
 	add_child(mundo)
@@ -90,7 +109,7 @@ func _crear_suelo() -> void:
 	var conjunto := TileSet.new()
 	conjunto.tile_shape = TileSet.TILE_SHAPE_ISOMETRIC
 	conjunto.tile_layout = TileSet.TILE_LAYOUT_DIAMOND_DOWN
-	conjunto.tile_size = Vector2i(128, 64)
+	conjunto.tile_size = Vector2i(256, 128)
 	_suelo = TileMapLayer.new()
 	_suelo.name = "SueloIsometrico"
 	_suelo.tile_set = conjunto
@@ -99,17 +118,26 @@ func _crear_suelo() -> void:
 	add_child(_suelo)
 	var atlas := TileSetAtlasSource.new()
 	atlas.texture = TILE_GRAFICO
-	atlas.texture_region_size = Vector2i(128, 64)
-	for x in 4:
+	atlas.texture_region_size = Vector2i(256, 128)
+	for x in 5:
 		atlas.create_tile(Vector2i(x, 0))
 	conjunto.add_source(atlas, 0)
 	_pintar_sala()
 
 
 func _pintar_sala() -> void:
-	for x in range(-18, 18):
-		for y in range(-18, 18):
-			var variante := posmod(x * 3 + y * 5 + _indice_sala, 4)
+	for x in range(-10, 11):
+		for y in range(-10, 11):
+			if abs(x) + abs(y) > 10:
+				continue
+			var mezcla := posmod(x * 31 + y * 17 + x * y * 7 + _indice_sala * 11, 100)
+			var variante := 0
+			if mezcla >= 76 and mezcla < 88:
+				variante = 1
+			elif mezcla >= 88 and mezcla < 96:
+				variante = 2
+			elif mezcla >= 96:
+				variante = 3 if mezcla < 99 else 4
 			_suelo.set_cell(Vector2i(x, y), 0, Vector2i(variante, 0))
 
 
@@ -126,29 +154,43 @@ func _crear_nucleo() -> void:
 	plataforma.name = "NucleoDeContencion"
 	_entidades.add_child(plataforma)
 	var base := Polygon2D.new()
-	base.polygon = _poligono_regular(150.0, 8)
-	base.color = Color(0.11, 0.075, 0.085)
+	base.polygon = _poligono_elipse(122.0, 56.0, 12)
+	base.color = Color(0.12, 0.095, 0.09, 0.78)
 	plataforma.add_child(base)
 	var aro := Line2D.new()
-	aro.points = _puntos_cerrados(_poligono_regular(132.0, 8))
-	aro.width = 12.0
-	aro.default_color = Color(1.0, 0.20, 0.08)
+	aro.points = _puntos_cerrados(_poligono_elipse(114.0, 50.0, 48))
+	aro.width = 4.0
+	aro.default_color = Color(0.54, 0.30, 0.19, 0.8)
 	plataforma.add_child(aro)
 	var aro_interno := Line2D.new()
-	aro_interno.points = _puntos_cerrados(_poligono_regular(92.0, 8))
-	aro_interno.width = 5.0
-	aro_interno.default_color = Color(1.0, 0.55, 0.15)
+	aro_interno.points = _puntos_cerrados(_poligono_elipse(88.0, 37.0, 48))
+	aro_interno.width = 2.0
+	aro_interno.default_color = Color(0.67, 0.39, 0.23, 0.75)
 	plataforma.add_child(aro_interno)
-	_luz_nucleo = _crear_luz(Vector2.ZERO, Color(1.0, 0.12, 0.055), 4.8)
+	var interior := Polygon2D.new()
+	interior.polygon = _poligono_elipse(65.0, 25.0, 48)
+	interior.color = Color(0.10, 0.055, 0.05, 0.82)
+	plataforma.add_child(interior)
+	var pulso := Line2D.new()
+	pulso.points = _puntos_cerrados(_poligono_elipse(43.0, 16.0, 40))
+	pulso.width = 1.0
+	pulso.default_color = Color(0.82, 0.42, 0.20, 0.65)
+	plataforma.add_child(pulso)
+	_aro_nucleo = Node2D.new()
+	_aro_nucleo.name = "MarcasDelNucleo"
+	plataforma.add_child(_aro_nucleo)
+	for indice in 8:
+		var marca := Line2D.new()
+		marca.points = PackedVector2Array([Vector2(-5, -3), Vector2(0, -8), Vector2(5, -3)])
+		marca.position = Vector2(cos(TAU * indice / 8.0) * 99.0, sin(TAU * indice / 8.0) * 43.0)
+		marca.rotation = TAU * indice / 8.0
+		marca.width = 2.0
+		marca.default_color = Color(0.72, 0.46, 0.27, 0.82)
+		_aro_nucleo.add_child(marca)
+	_luz_nucleo = _crear_luz(Vector2.ZERO, Color(1.0, 0.24, 0.12), 1.15)
+	_luz_nucleo.texture_scale = 1.15
 	_luz_nucleo.z_index = 1
 	plataforma.add_child(_luz_nucleo)
-	for indice in 8:
-		var runa := Polygon2D.new()
-		runa.polygon = PackedVector2Array([Vector2(-5, -11), Vector2(5, -11), Vector2(10, 0), Vector2(-10, 0)])
-		runa.position = Vector2(cos(TAU * indice / 8.0), sin(TAU * indice / 8.0)) * 110.0
-		runa.rotation = TAU * indice / 8.0
-		runa.color = Color(1.0, 0.53, 0.15)
-		plataforma.add_child(runa)
 
 
 func _crear_ruinas() -> void:
@@ -156,43 +198,60 @@ func _crear_ruinas() -> void:
 	circulo.name = "PlataformaAntigua"
 	circulo.texture = RUINA_CIRCULAR
 	circulo.position = Vector2(0, 6)
-	circulo.scale = Vector2(1.30, 1.30)
-	circulo.z_index = -2
+	circulo.scale = Vector2(0.82, 0.82)
+	circulo.modulate = Color(0.72, 0.67, 0.59, 0.88)
+	circulo.z_index = -3
 	_entidades.add_child(circulo)
 
-	for lado in [-1, 1]:
-		var muro := Sprite2D.new()
-		muro.texture = RUINA_MURO
-		muro.position = Vector2(550.0 * lado, -250)
-		muro.flip_h = lado < 0
-		muro.scale = Vector2(1.15, 1.15)
-		muro.z_index = -1
-		_entidades.add_child(muro)
+	var posiciones_ruinas := [
+		Vector2(-660, -235), Vector2(-455, -385), Vector2(-180, -470),
+		Vector2(255, -445), Vector2(585, -310), Vector2(700, -35),
+		Vector2(555, 290), Vector2(215, 435), Vector2(-210, 448),
+		Vector2(-580, 290), Vector2(-720, 25),
+	]
+	for indice in posiciones_ruinas.size():
+		var ruina := Sprite2D.new()
+		ruina.texture = RUINAS[indice % RUINAS.size()]
+		ruina.position = posiciones_ruinas[indice]
+		ruina.scale = Vector2(0.64, 0.64) if indice % 3 == 0 else Vector2(0.52, 0.52)
+		ruina.flip_h = indice % 2 == 1
+		ruina.modulate = Color(0.82, 0.73, 0.63, 0.92)
+		ruina.z_index = -1
+		_entidades.add_child(ruina)
 
 	var grieta_izquierda := Sprite2D.new()
 	grieta_izquierda.texture = GRIETA_ROJA
-	grieta_izquierda.position = Vector2(-620, 105)
-	grieta_izquierda.scale = Vector2(0.78, 0.78)
-	grieta_izquierda.modulate = Color(0.82, 0.52, 0.48, 0.82)
+	grieta_izquierda.position = Vector2(-690, 80)
+	grieta_izquierda.scale = Vector2(0.58, 0.58)
+	grieta_izquierda.modulate = Color(0.75, 0.45, 0.34, 0.7)
 	grieta_izquierda.z_index = -3
 	_entidades.add_child(grieta_izquierda)
 
 	var grieta_derecha := Sprite2D.new()
 	grieta_derecha.texture = GRIETA_ROJA
-	grieta_derecha.position = Vector2(620, -85)
-	grieta_derecha.scale = Vector2(0.68, 0.68)
-	grieta_derecha.modulate = Color(0.72, 0.45, 0.42, 0.72)
+	grieta_derecha.position = Vector2(670, -95)
+	grieta_derecha.scale = Vector2(0.52, 0.52)
+	grieta_derecha.modulate = Color(0.72, 0.43, 0.35, 0.62)
 	grieta_derecha.z_index = -3
 	_entidades.add_child(grieta_derecha)
 
 	var altar := Sprite2D.new()
 	altar.name = "MarcaAntigua"
 	altar.texture = ALTAR_TINTA
-	altar.position = Vector2(-470, -170)
-	altar.scale = Vector2(0.48, 0.48)
-	altar.modulate = Color(0.72, 0.82, 0.67, 0.42)
+	altar.position = Vector2(-435, -230)
+	altar.scale = Vector2(0.34, 0.34)
+	altar.modulate = Color(0.72, 0.64, 0.50, 0.38)
 	altar.z_index = -2
 	_entidades.add_child(altar)
+
+	var restos := Sprite2D.new()
+	restos.name = "RestosAntiguos"
+	restos.texture = RESTOS_TINTA
+	restos.position = Vector2(460, 175)
+	restos.scale = Vector2(0.50, 0.50)
+	restos.modulate = Color(0.80, 0.72, 0.60, 0.78)
+	restos.z_index = -1
+	_entidades.add_child(restos)
 
 
 func _crear_murossala() -> void:
@@ -232,31 +291,30 @@ func _crear_portal() -> void:
 	var base := CollisionPolygon2D.new()
 	base.polygon = PackedVector2Array([Vector2(-190, 0), Vector2(0, -48), Vector2(190, 0), Vector2(0, 48)])
 	puerta.add_child(base)
-	var muro := Polygon2D.new()
-	muro.polygon = PackedVector2Array([Vector2(-235, 0), Vector2(-190, -110), Vector2(-115, -158), Vector2(0, -190), Vector2(115, -158), Vector2(190, -110), Vector2(235, 0), Vector2(0, 56)])
-	muro.color = Color(0.12, 0.075, 0.085)
-	puerta.add_child(muro)
-	var marco := Line2D.new()
-	marco.points = PackedVector2Array([Vector2(-90, -40), Vector2(-90, -112), Vector2(0, -168), Vector2(90, -112), Vector2(90, -40)])
-	marco.width = 15.0
-	marco.default_color = Color(0.73, 0.39, 0.17)
-	puerta.add_child(marco)
-	var hexagono := Line2D.new()
-	hexagono.points = _puntos_cerrados(_poligono_regular(67.0, 6))
-	hexagono.position = Vector2(0, -92)
-	hexagono.width = 12.0
-	hexagono.default_color = Color(1.0, 0.14, 0.055)
-	puerta.add_child(hexagono)
+	var energia := Polygon2D.new()
+	energia.position = Vector2(0, -105)
+	energia.polygon = PackedVector2Array([Vector2(-48, 34), Vector2(-48, -28), Vector2(-24, -63), Vector2(0, -78), Vector2(24, -63), Vector2(48, -28), Vector2(48, 34)])
+	energia.color = Color(0.48, 0.09, 0.055, 0.84)
+	puerta.add_child(energia)
+	var portal := Sprite2D.new()
+	portal.name = "ArcoDePiedra"
+	portal.texture = PORTAL_TINTA
+	portal.position = Vector2(0, -88)
+	portal.scale = Vector2(0.78, 0.78)
+	portal.modulate = Color(0.86, 0.70, 0.52)
+	portal.z_index = 2
+	puerta.add_child(portal)
+	var luz_nucleo := _crear_luz(Vector2(0, -105), Color(1.0, 0.18, 0.06), 1.5)
+	luz_nucleo.texture_scale = 1.45
+	puerta.add_child(luz_nucleo)
 	_entidades.add_child(puerta)
-	var luz_puerta := _crear_luz(Vector2(0, -410), Color(1.0, 0.12, 0.045), 4.0)
-	add_child(luz_puerta)
 
 
 func _crear_pilares_y_braseros() -> void:
-	var posiciones := [Vector2(-315, -145), Vector2(315, -145), Vector2(-315, 145), Vector2(315, 145)]
+	var posiciones := [Vector2(-370, -195), Vector2(345, -205), Vector2(-330, 190), Vector2(390, 165)]
 	for indice in posiciones.size():
-		_crear_pilar(posiciones[indice], Color(0.27, 1.0, 0.15) if indice % 2 == 0 else Color(1.0, 0.32, 0.08))
-		_crear_brasero(posiciones[indice] + Vector2(0, 72), Color(1.0, 0.36, 0.08) if indice % 2 == 0 else Color(0.30, 0.95, 0.20))
+		_crear_pilar(posiciones[indice], Color(0.62, 0.90, 0.34) if indice % 2 == 0 else Color(1.0, 0.46, 0.20))
+		_crear_brasero(posiciones[indice] + Vector2(0, 72), Color(1.0, 0.48, 0.20))
 
 
 func _crear_pilar(posicion: Vector2, color_nucleo: Color) -> void:
@@ -268,51 +326,51 @@ func _crear_pilar(posicion: Vector2, color_nucleo: Color) -> void:
 	var base := CollisionPolygon2D.new()
 	base.polygon = PackedVector2Array([Vector2(-30, 0), Vector2(0, -16), Vector2(30, 0), Vector2(0, 16)])
 	pilar.add_child(base)
-	var frente := Polygon2D.new()
-	frente.position.y = -40
-	frente.polygon = PackedVector2Array([Vector2(-36, -35), Vector2(0, -17), Vector2(0, 18), Vector2(-36, 0)])
-	frente.color = Color(0.18, 0.12, 0.13)
-	pilar.add_child(frente)
-	var costado := Polygon2D.new()
-	costado.position.y = -40
-	costado.polygon = PackedVector2Array([Vector2(0, -17), Vector2(36, -35), Vector2(36, 0), Vector2(0, 18)])
-	costado.color = Color(0.10, 0.085, 0.10)
-	pilar.add_child(costado)
-	var cima := Polygon2D.new()
-	cima.position.y = -58
-	cima.polygon = PackedVector2Array([Vector2(-36, 0), Vector2(0, -19), Vector2(36, 0), Vector2(0, 19)])
-	cima.color = Color(0.34, 0.24, 0.19)
-	pilar.add_child(cima)
-	var nucleo := Polygon2D.new()
-	nucleo.position = Vector2(0, -54)
-	nucleo.polygon = _poligono_regular(11.0, 8)
-	nucleo.color = color_nucleo
-	pilar.add_child(nucleo)
-	var luz := _crear_luz(Vector2(0, -54), color_nucleo, 1.5)
-	luz.z_index = 2
-	pilar.add_child(luz)
+	var base_visual := Sprite2D.new()
+	base_visual.texture = PILAR_BASE_TINTA
+	base_visual.position = Vector2(0, 0)
+	base_visual.scale = Vector2(0.54, 0.54)
+	base_visual.modulate = Color(0.85, 0.73, 0.58)
+	pilar.add_child(base_visual)
+	var columna := Sprite2D.new()
+	columna.texture = PILAR_MEDIO_TINTA
+	columna.position = Vector2(0, -47)
+	columna.scale = Vector2(0.50, 0.50)
+	columna.modulate = Color(0.79, 0.67, 0.54)
+	pilar.add_child(columna)
 	var piedra := Sprite2D.new()
 	piedra.texture = RUINA_PILAR
-	piedra.position = Vector2(0, -28)
-	piedra.scale = Vector2(0.72, 0.72)
-	piedra.z_index = -1
+	piedra.position = Vector2(0, -34)
+	piedra.scale = Vector2(0.47, 0.47)
+	piedra.modulate = Color(0.72, 0.68, 0.60, 0.88)
+	piedra.z_index = 1
 	pilar.add_child(piedra)
+	var nucleo := Polygon2D.new()
+	nucleo.position = Vector2(0, -70)
+	nucleo.polygon = _poligono_regular(7.0, 8)
+	nucleo.color = color_nucleo
+	pilar.add_child(nucleo)
+	var luz := _crear_luz(Vector2(0, -70), color_nucleo, 0.65)
+	luz.z_index = 2
+	pilar.add_child(luz)
 	_entidades.add_child(pilar)
 
 
 func _crear_brasero(posicion: Vector2, color_fuego: Color) -> void:
 	var brasero := Node2D.new()
 	brasero.position = posicion
-	var copa := Polygon2D.new()
-	copa.polygon = PackedVector2Array([Vector2(-18, -7), Vector2(0, -16), Vector2(18, -7), Vector2(12, 8), Vector2(-12, 8)])
-	copa.color = Color(0.61, 0.32, 0.14)
-	brasero.add_child(copa)
+	var estatua := Sprite2D.new()
+	estatua.texture = BRASERO_TINTA
+	estatua.position = Vector2(0, -10)
+	estatua.scale = Vector2(0.42, 0.42)
+	estatua.modulate = Color(0.94, 0.64, 0.37)
+	brasero.add_child(estatua)
 	var llama := Polygon2D.new()
-	llama.position.y = -20
-	llama.polygon = PackedVector2Array([Vector2(-10, 7), Vector2(-8, -7), Vector2(0, -21), Vector2(4, -6), Vector2(11, 5), Vector2(0, 12)])
+	llama.position.y = -40
+	llama.polygon = PackedVector2Array([Vector2(-6, 4), Vector2(-5, -6), Vector2(0, -15), Vector2(4, -4), Vector2(7, 4), Vector2(0, 8)])
 	llama.color = color_fuego
 	brasero.add_child(llama)
-	var luz := _crear_luz(Vector2.ZERO, color_fuego, 1.7)
+	var luz := _crear_luz(Vector2.ZERO, color_fuego, 0.8)
 	brasero.add_child(luz)
 	_entidades.add_child(brasero)
 
@@ -391,35 +449,29 @@ func _crear_hud() -> void:
 	var capa := CanvasLayer.new()
 	capa.layer = 10
 	add_child(capa)
-	var fondo := Color(0.055, 0.035, 0.045, 0.91)
-	var oro := Color(0.87, 0.66, 0.39)
-	var panel_titulo := _crear_panel(capa, Rect2(22, 18, 410, 74), fondo, oro)
-	_crear_texto(panel_titulo, "EL INQUIETO", Rect2(16, 7, 370, 34), 23, Color(0.96, 0.84, 0.62))
-	_zona = _crear_texto(panel_titulo, "ZONA DE CONTENCIÓN  //  SECTOR 01", Rect2(18, 43, 380, 23), 11, Color(0.84, 0.57, 0.35))
-	var panel_oleada := _crear_panel(capa, Rect2(480, 18, 320, 62), fondo, oro)
-	_oleada = _crear_texto(panel_oleada, "OLEADA  01 / 06", Rect2(18, 13, 284, 34), 20, Color(1.0, 0.79, 0.48))
-	var panel_datos := _crear_panel(capa, Rect2(846, 18, 410, 74), fondo, Color(0.52, 0.70, 0.39))
-	_puntaje = _crear_texto(panel_datos, "PUNTAJE 000000  ·  TIEMPO 00:00", Rect2(14, 10, 382, 24), 13, oro)
-	_amenazas = _crear_texto(panel_datos, "AMENAZAS 00", Rect2(14, 42, 382, 22), 12, Color(0.59, 0.91, 0.42))
-	var panel_controles := _crear_panel(capa, Rect2(22, 628, 620, 66), fondo, oro)
-	_crear_texto(panel_controles, "WASD / FLECHAS  MOVER     SHIFT  ESQUIVAR     ESPACIO  DISPARAR", Rect2(15, 18, 590, 28), 11, Color(0.90, 0.80, 0.67))
-	var panel_vida := _crear_panel(capa, Rect2(948, 620, 308, 74), fondo, Color(0.20, 0.78, 0.92))
-	_crear_texto(panel_vida, "INTEGRIDAD DEL TRAJE", Rect2(15, 5, 275, 22), 11, Color(0.70, 0.89, 0.91))
+	var oro := Color(0.91, 0.78, 0.58)
+	_crear_texto(capa, "EL INQUIETO", Rect2(30, 20, 240, 30), 19, Color(0.97, 0.87, 0.68))
+	_zona = _crear_texto(capa, "ATRIO DE LAS CENIZAS", Rect2(31, 51, 340, 22), 10, Color(0.80, 0.64, 0.47))
+	_oleada = _crear_texto(capa, "OLEADA  01 / 06", Rect2(495, 24, 290, 28), 17, oro)
+	_oleada.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_puntaje = _crear_texto(capa, "000000  ·  00:00", Rect2(980, 22, 270, 24), 13, oro)
+	_puntaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_amenazas = _crear_texto(capa, "AMENAZAS  00", Rect2(1020, 49, 230, 20), 10, Color(0.78, 0.77, 0.62))
+	_amenazas.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_crear_texto(capa, "INTEGRIDAD", Rect2(1032, 662, 212, 17), 9, Color(0.85, 0.74, 0.60))
 	_integridad = ProgressBar.new()
-	_integridad.position = Vector2(15, 34)
-	_integridad.size = Vector2(276, 22)
+	_integridad.position = Vector2(1032, 682)
+	_integridad.size = Vector2(212, 8)
 	_integridad.max_value = 100.0
 	_integridad.value = 100.0
 	_integridad.show_percentage = false
 	var fondo_barra := StyleBoxFlat.new()
-	fondo_barra.bg_color = Color(0.045, 0.08, 0.11)
-	fondo_barra.set_corner_radius_all(4)
+	fondo_barra.bg_color = Color(0.09, 0.055, 0.05, 0.9)
 	_integridad.add_theme_stylebox_override("background", fondo_barra)
 	var relleno := StyleBoxFlat.new()
-	relleno.bg_color = Color(0.12, 0.76, 0.92)
-	relleno.set_corner_radius_all(4)
+	relleno.bg_color = Color(0.78, 0.26, 0.15)
 	_integridad.add_theme_stylebox_override("fill", relleno)
-	panel_vida.add_child(_integridad)
+	capa.add_child(_integridad)
 
 
 func _crear_panel(parent: Node, rectangulo: Rect2, color: Color, borde: Color) -> Panel:
@@ -480,7 +532,7 @@ func _crear_esporas() -> void:
 func _crear_luz(posicion: Vector2, color: Color, energia: float) -> PointLight2D:
 	var luz := PointLight2D.new()
 	luz.texture = _textura_luz
-	luz.texture_scale = 3.4
+	luz.texture_scale = 2.6
 	luz.color = color
 	luz.energy = energia
 	luz.position = posicion
@@ -509,6 +561,14 @@ func _poligono_regular(radio: float, lados: int) -> PackedVector2Array:
 	return puntos
 
 
+func _poligono_elipse(radio_x: float, radio_y: float, lados: int) -> PackedVector2Array:
+	var puntos := PackedVector2Array()
+	for indice in lados:
+		var angulo := TAU * float(indice) / lados
+		puntos.append(Vector2(cos(angulo) * radio_x, sin(angulo) * radio_y))
+	return puntos
+
+
 func _puntos_cerrados(puntos: PackedVector2Array) -> PackedVector2Array:
 	var resultado := puntos.duplicate()
 	if not resultado.is_empty():
@@ -521,7 +581,7 @@ func _actualizar_hud() -> void:
 		return
 	if is_instance_valid(_puntaje):
 		var segundos := floori(_director.tiempo_transcurrido)
-		_puntaje.text = "PUNTAJE %06d  ·  TIEMPO %02d:%02d" % [_director.puntaje, floori(float(segundos) / 60.0), segundos % 60]
+		_puntaje.text = "%06d  ·  %02d:%02d" % [_director.puntaje, floori(float(segundos) / 60.0), segundos % 60]
 	if is_instance_valid(_amenazas):
 		_amenazas.text = "AMENAZAS  %02d" % get_tree().get_nodes_in_group("enemigos").size()
 	if is_instance_valid(_integridad) and is_instance_valid(_jugador):

@@ -65,6 +65,12 @@ func recibir_dano(cantidad: float) -> void:
 		return
 	integridad = maxf(0.0, integridad - cantidad)
 	_invulnerabilidad = 0.55
+	var modelo := get_node_or_null("ModeloAstronauta") as Node3D
+	if modelo:
+		var escala := modelo.scale
+		var golpe := create_tween()
+		golpe.tween_property(modelo, "scale", escala * 1.08, 0.06)
+		golpe.tween_property(modelo, "scale", escala, 0.1)
 	if integridad <= 0.0:
 		if _director == null:
 			_conectar_director()

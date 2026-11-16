@@ -70,21 +70,17 @@ func _animar_boton(button: Control, escala: float) -> void:
 
 
 func _animar_fondo() -> void:
-	var heroe := $SubViewportContainer/SubViewport/EscenarioFondo/VigiaCarmesi as Node3D
 	var jefe_izquierdo := $SubViewportContainer/SubViewport/EscenarioFondo/JefeIzquierdo as Node3D
 	var jefe_derecho := $SubViewportContainer/SubViewport/EscenarioFondo/JefeDerecho as Node3D
 	var nave_derecha := $SubViewportContainer/SubViewport/EscenarioFondo/NaveDerecha as Node3D
-	var movimiento := create_tween().set_loops()
-	movimiento.tween_property(heroe, "position:y", 0.84, 1.4)
-	movimiento.tween_property(heroe, "position:y", 0.72, 1.4)
 	var movimiento_jefes := create_tween().set_loops()
 	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.75, 2.0)
-	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.7, 2.0)
+	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 3.15, 2.0)
 	movimiento_jefes.tween_property(jefe_izquierdo, "position:y", 2.55, 2.0)
-	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.5, 2.0)
+	movimiento_jefes.parallel().tween_property(jefe_derecho, "position:y", 2.95, 2.0)
 	var movimiento_nave := create_tween().set_loops()
-	movimiento_nave.tween_property(nave_derecha, "position:y", 2.85, 2.2)
-	movimiento_nave.tween_property(nave_derecha, "position:y", 2.65, 2.2)
+	movimiento_nave.tween_property(nave_derecha, "position:y", 4.6, 2.2)
+	movimiento_nave.tween_property(nave_derecha, "position:y", 4.4, 2.2)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

@@ -119,10 +119,10 @@ func _crear_personaje() -> void:
 	_personaje.texture = IDLE
 	_personaje.region_enabled = true
 	_personaje.region_rect = Rect2(0, 128, 64, 64)
-	_personaje.pixel_size = 0.024
+	_personaje.pixel_size = 0.09
 	_personaje.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_personaje.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	_personaje.position.y = 0.82
+	_personaje.position.y = 1.26
 	_personaje.modulate = Color(1.0, 0.88, 0.78)
 	add_child(_personaje)
 	_crear_aura()
@@ -152,8 +152,8 @@ func _fila_direccion(direccion: Vector3) -> int:
 func _crear_aura() -> void:
 	var aura := MeshInstance3D.new()
 	var aro := TorusMesh.new()
-	aro.inner_radius = 0.48
-	aro.outer_radius = 0.53
+	aro.inner_radius = 0.78
+	aro.outer_radius = 0.86
 	aro.rings = 8
 	aro.ring_segments = 32
 	aura.mesh = aro

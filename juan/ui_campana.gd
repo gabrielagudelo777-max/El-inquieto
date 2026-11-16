@@ -140,29 +140,26 @@ func _actualizar_cuenta_regresiva(segundos: int) -> void:
 
 func _aplicar_estilo() -> void:
 	var panel := StyleBoxFlat.new()
-	panel.bg_color = Color(0.075, 0.025, 0.045, 0.96)
-	panel.border_color = Color(0.66, 0.38, 0.18)
-	panel.set_border_width_all(2)
-	panel.set_corner_radius_all(8)
-	panel.set_content_margin_all(28)
-	panel.shadow_color = Color(0.28, 0.035, 0.06, 0.55)
-	panel.shadow_size = 16
+	panel.bg_color = Color(0.035, 0.025, 0.03, 0.94)
+	panel.border_color = Color(0.50, 0.31, 0.17, 0.9)
+	panel.set_border_width_all(1)
+	panel.set_border_width(SIDE_BOTTOM, 3)
+	panel.set_content_margin_all(30)
 	$Overlay/Centro/Panel.add_theme_stylebox_override("panel", panel)
 
 	for boton in [btn_principal, btn_menu]:
 		var normal := StyleBoxFlat.new()
-		normal.bg_color = Color(0.23, 0.075, 0.065)
-		normal.border_color = Color(0.79, 0.52, 0.25)
-		normal.set_border_width_all(2)
-		normal.set_corner_radius_all(5)
+		normal.bg_color = Color(0.10, 0.045, 0.04, 0.82)
+		normal.border_color = Color(0.48, 0.27, 0.14)
+		normal.set_border_width(SIDE_BOTTOM, 2)
 		normal.set_content_margin_all(10)
 		var encima := normal.duplicate() as StyleBoxFlat
-		encima.bg_color = Color(0.39, 0.13, 0.07)
+		encima.bg_color = Color(0.22, 0.075, 0.045, 0.94)
 		boton.add_theme_stylebox_override("normal", normal)
 		boton.add_theme_stylebox_override("hover", encima)
 		boton.add_theme_stylebox_override("pressed", normal)
-		boton.add_theme_color_override("font_color", Color(0.96, 0.82, 0.59))
-		boton.add_theme_color_override("font_hover_color", Color(1.0, 0.91, 0.72))
+		boton.add_theme_color_override("font_color", Color(0.88, 0.75, 0.57))
+		boton.add_theme_color_override("font_hover_color", Color(1.0, 0.89, 0.67))
 
 
 func _actualizar_tiempo(segundos: int) -> void:

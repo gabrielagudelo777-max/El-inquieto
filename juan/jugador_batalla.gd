@@ -12,10 +12,14 @@ var _tiempo_dash := 0.0
 var _enfriamiento_disparo := 0.0
 var _invulnerabilidad := 0.0
 var _director: DirectorCampana
+var _animacion: AnimationPlayer
 
 
 func _ready() -> void:
 	add_to_group("jugador")
+	_animacion = find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if _animacion:
+		_animacion.play("CharacterArmature|Idle_Gun")
 	call_deferred("_conectar_director")
 
 
@@ -38,6 +42,10 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direccion.x * velocidad_movimiento
 		velocity.z = direccion.z * velocidad_movimiento
 	move_and_slide()
+	if _animacion:
+		var animacion := "CharacterArmature|Run_Gun" if direccion.length_squared() > 0.0 else "CharacterArmature|Idle_Gun"
+		if _animacion.current_animation != animacion:
+			_animacion.play(animacion)
 	var posicion := global_position
 	posicion.x = clampf(posicion.x, -limite_arena, limite_arena)
 	posicion.z = clampf(posicion.z, -limite_arena, limite_arena)

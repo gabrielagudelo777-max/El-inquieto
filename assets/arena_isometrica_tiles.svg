@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="64" viewBox="0 0 512 64">
+  <g stroke="#574536" stroke-width="2">
+    <path d="M64 1 127 32 64 63 1 32Z" fill="#29242a"/><path d="M8 32 64 4 120 32" fill="none" stroke="#3e3536"/>
+    <path d="M42 18 50 27 44 33 53 40 48 47" fill="none" stroke="#b7472e" stroke-width="3"/><path d="M78 42 85 34" fill="none" stroke="#d07938" stroke-width="2"/>
+    <path transform="translate(128 0)" d="M64 1 127 32 64 63 1 32Z" fill="#242329"/><path transform="translate(128 0)" d="M12 32 63 7 116 32" fill="none" stroke="#3c3737"/>
+    <path transform="translate(128 0)" d="M44 17 52 25 47 32 56 37 51 45" fill="none" stroke="#d05b30" stroke-width="3"/><path transform="translate(128 0)" d="M86 26 79 32 86 39" fill="none" stroke="#b58242" stroke-width="2"/>
+    <path transform="translate(256 0)" d="M64 1 127 32 64 63 1 32Z" fill="#302329"/><path transform="translate(256 0)" d="M10 32 64 5 118 32" fill="none" stroke="#473a36"/>
+    <path transform="translate(256 0)" d="M37 23 45 30 39 38 48 44" fill="none" stroke="#c7823c" stroke-width="3"/><path transform="translate(256 0)" d="M77 18 83 25 78 31" fill="none" stroke="#9a382d" stroke-width="2"/>
+    <path transform="translate(384 0)" d="M64 1 127 32 64 63 1 32Z" fill="#202a27"/><path transform="translate(384 0)" d="M9 32 64 5 119 32" fill="none" stroke="#35413b"/>
+    <path transform="translate(384 0)" d="M45 18 53 25 48 32 56 39" fill="none" stroke="#65a64c" stroke-width="3"/><path transform="translate(384 0)" d="M82 38 75 44" fill="none" stroke="#bd6335" stroke-width="2"/>
+  </g>
+</svg>

@@ -3,6 +3,15 @@ class_name UICampana
 
 ## Menú, HUD y pantallas de flujo. Conecta sus datos mediante señales del director.
 
+const NOMBRES_CAMARAS := [
+	"Atrio de las Cenizas",
+	"Galería Carmesí",
+	"Foso del Eclipse",
+	"Santuario de Brasa",
+	"Pasaje de los Ecos",
+	"Salón del Vigía",
+]
+
 @onready var hud: Control = $HUD
 @onready var lbl_vidas: Label = $HUD/Barra/Fila/Vidas
 @onready var lbl_oleada: Label = $HUD/Barra/Fila/Oleada
@@ -16,10 +25,12 @@ class_name UICampana
 
 var director: DirectorCampana
 var estado_actual: int = DirectorCampana.Estado.MENU
+var mostrar_hud := true
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_aplicar_estilo()
 	btn_principal.pressed.connect(_al_pulsar_principal)
 	btn_menu.pressed.connect(_al_pulsar_menu)
 	call_deferred("_conectar_director")
@@ -78,8 +89,8 @@ func _actualizar_estado(nuevo: int) -> void:
 		DirectorCampana.Estado.COMBATE:
 			mostrar_overlay = false
 		DirectorCampana.Estado.INTERMISION:
-			lbl_titulo.text = "OLEADA COMPLETADA"
-			lbl_detalle.text = "Recupera el aliento."
+			lbl_titulo.text = "SALA COMPLETADA"
+			lbl_detalle.text = "El siguiente portal se abrirá en un momento."
 			btn_principal.hide()
 		DirectorCampana.Estado.PAUSA:
 			lbl_titulo.text = "PAUSA"
@@ -104,7 +115,7 @@ func _actualizar_estado(nuevo: int) -> void:
 
 func _overlay_actualizar(mostrar: bool) -> void:
 	overlay.visible = mostrar
-	hud.visible = estado_actual != DirectorCampana.Estado.MENU
+	hud.visible = mostrar_hud and estado_actual != DirectorCampana.Estado.MENU
 
 
 func _actualizar_puntaje(actual: int) -> void:
@@ -116,13 +127,42 @@ func _actualizar_vidas(actuales: int) -> void:
 
 
 func _actualizar_oleada(indice: int, total: int, nombre: String, es_jefe: bool) -> void:
-	var etiqueta := "JEFE" if es_jefe else "OLEADA"
-	lbl_oleada.text = "%s  %02d / %02d  ·  %s" % [etiqueta, indice, total, nombre.to_upper()]
+	var camara: String = NOMBRES_CAMARAS[mini(indice - 1, NOMBRES_CAMARAS.size() - 1)]
+	var etiqueta := "JEFE" if es_jefe else "SALA"
+	var detalle := nombre.to_upper() if es_jefe else camara.to_upper()
+	lbl_oleada.text = "%s  %02d / %02d  ·  %s" % [etiqueta, indice, total, detalle]
 
 
 func _actualizar_cuenta_regresiva(segundos: int) -> void:
 	if estado_actual == DirectorCampana.Estado.INTERMISION:
-		lbl_detalle.text = "La siguiente formación llega en %d…" % segundos
+		lbl_detalle.text = "El siguiente portal se abre en %d…" % segundos
+
+
+func _aplicar_estilo() -> void:
+	var panel := StyleBoxFlat.new()
+	panel.bg_color = Color(0.075, 0.025, 0.045, 0.96)
+	panel.border_color = Color(0.66, 0.38, 0.18)
+	panel.set_border_width_all(2)
+	panel.set_corner_radius_all(8)
+	panel.set_content_margin_all(28)
+	panel.shadow_color = Color(0.28, 0.035, 0.06, 0.55)
+	panel.shadow_size = 16
+	$Overlay/Centro/Panel.add_theme_stylebox_override("panel", panel)
+
+	for boton in [btn_principal, btn_menu]:
+		var normal := StyleBoxFlat.new()
+		normal.bg_color = Color(0.23, 0.075, 0.065)
+		normal.border_color = Color(0.79, 0.52, 0.25)
+		normal.set_border_width_all(2)
+		normal.set_corner_radius_all(5)
+		normal.set_content_margin_all(10)
+		var encima := normal.duplicate() as StyleBoxFlat
+		encima.bg_color = Color(0.39, 0.13, 0.07)
+		boton.add_theme_stylebox_override("normal", normal)
+		boton.add_theme_stylebox_override("hover", encima)
+		boton.add_theme_stylebox_override("pressed", normal)
+		boton.add_theme_color_override("font_color", Color(0.96, 0.82, 0.59))
+		boton.add_theme_color_override("font_hover_color", Color(1.0, 0.91, 0.72))
 
 
 func _actualizar_tiempo(segundos: int) -> void:

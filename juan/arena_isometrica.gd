@@ -41,6 +41,7 @@ var _entidades: Node2D
 var _jugador: CharacterBody2D
 var _director: DirectorCampana
 var _configuracion: OleadaConfig
+var _mejora_aplicada := false
 var _enemigos_restantes := 0
 var _reloj_aparicion := 0.0
 var _indice_sala := 0
@@ -415,6 +416,17 @@ func _al_morir_jugador() -> void:
 		_jugador.call("reaparecer")
 
 func _iniciar_oleada(indice: int, configuracion: OleadaConfig) -> void:
+	if _mejora_aplicada and is_instance_valid(_jugador):
+		_jugador.call("limpiar_mejora_temporal")
+		_mejora_aplicada = false
+
+	if is_instance_valid(_jugador):
+		var mejora := _director.consumir_mejora_pendiente()
+		if mejora != null:
+			_mejora_aplicada = bool(
+				_jugador.call("aplicar_mejora_temporal", mejora)
+			)
+
 	_indice_sala = indice - 1
 	_configuracion = configuracion
 	_enemigos_restantes = configuracion.cantidad_enemigos

@@ -14,6 +14,8 @@ const TAMANO_CELDA := 256
 @export var duracion_invulnerabilidad := 0.75
 @export var duracion_esquive := 0.18
 @export var enfriamiento_esquive := 0.75
+@export var intervalo_disparo := 0.28
+@export var dano_proyectil := 1
 @export var punto_reaparicion := Vector2(0.0, 210.0)
 
 var integridad := 100.0
@@ -31,9 +33,18 @@ var _tiempo_animacion := 0.0
 var _cuadro := 0
 var _fila := 2
 var _muerto := false
+var _velocidad_base := 0.0
+var _velocidad_correr_base := 0.0
+var _intervalo_disparo_base := 0.28
+var _dano_proyectil_base := 1
+var _mejora_activa: MejoraConfig
 
 
 func _ready() -> void:
+	_velocidad_base = velocidad
+	_velocidad_correr_base = velocidad_correr
+	_intervalo_disparo_base = intervalo_disparo
+	_dano_proyectil_base = dano_proyectil
 	add_to_group("jugador")
 	collision_layer = 1
 	collision_mask = 1
@@ -139,7 +150,39 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_pressed("disparar") and _enfriamiento_disparo <= 0.0:
 		_disparar()
-		_enfriamiento_disparo = 0.28
+		_enfriamiento_disparo = intervalo_disparo
+
+
+func aplicar_mejora_temporal(mejora: MejoraConfig) -> bool:
+	if mejora == null:
+		push_error("JugadorIsometrico: no se puede aplicar una mejora vacía.")
+		return false
+
+	limpiar_mejora_temporal()
+	_mejora_activa = mejora
+
+	match mejora.tipo:
+		MejoraConfig.Tipo.DANO_PROYECTIL:
+			dano_proyectil = _dano_proyectil_base + maxi(roundi(mejora.valor), 0)
+		MejoraConfig.Tipo.CADENCIA_DISPARO:
+			var reduccion := clampf(mejora.valor, 0.0, 0.9)
+			intervalo_disparo = maxf(_intervalo_disparo_base * (1.0 - reduccion), 0.05)
+		MejoraConfig.Tipo.VELOCIDAD:
+			var aumento := clampf(mejora.valor, 0.0, 1.0)
+			velocidad = _velocidad_base * (1.0 + aumento)
+			velocidad_correr = _velocidad_correr_base * (1.0 + aumento)
+
+	_enfriamiento_disparo = minf(_enfriamiento_disparo, intervalo_disparo)
+	return true
+
+
+func limpiar_mejora_temporal() -> void:
+	velocidad = _velocidad_base
+	velocidad_correr = _velocidad_correr_base
+	intervalo_disparo = _intervalo_disparo_base
+	dano_proyectil = _dano_proyectil_base
+	_enfriamiento_disparo = intervalo_disparo
+	_mejora_activa = null
 
 
 func recibir_dano(cantidad: float) -> void:
@@ -201,7 +244,7 @@ func _disparar() -> void:
 
 	contenedor.add_child(proyectil)
 	proyectil.global_position = global_position + direccion * 24.0 + Vector2(0, -20)
-	proyectil.call("configurar", direccion)
+	proyectil.call("configurar", direccion, dano_proyectil)
 
 	_tiempo_ataque = 0.24
 	_direccion_mirada = direccion

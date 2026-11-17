@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MejoraConfig" format=3 uid="uid://bswdg6idm74j5"]
+
+[ext_resource type="Script" uid="uid://y37bf7bpl82y" path="res://juan/mejora_config.gd" id="1_70tvb"]
+
+[resource]
+script = ExtResource("1_70tvb")
+id = &"paso_ligero"
+nombre = "Paso ligero"
+descripcion = "Te mueves y corres 10 % más rápido en el siguiente combate."
+tipo = 2
+valor = 0.1
+metadata/_custom_type_script = "uid://y37bf7bpl82y"

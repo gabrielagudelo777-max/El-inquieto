@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MejoraConfig" format=3 uid="uid://u61x8005ct2"]
+
+[ext_resource type="Script" uid="uid://y37bf7bpl82y" path="res://juan/mejora_config.gd" id="1_o7b2w"]
+
+[resource]
+script = ExtResource("1_o7b2w")
+id = &"impacto_reforzado"
+nombre = "Impacto reforzado"
+descripcion = "Tus proyectiles infligen +1 de daño en el siguiente combate."
+valor = 1.0
+metadata/_custom_type_script = "uid://y37bf7bpl82y"

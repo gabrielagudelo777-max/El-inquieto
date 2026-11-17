@@ -26,11 +26,15 @@ const NOMBRES_CAMARAS := [
 var director: DirectorCampana
 var estado_actual: int = DirectorCampana.Estado.MENU
 var mostrar_hud := true
+var _contenedor_recompensas: HBoxContainer
+var _opciones_recompensa: Array[MejoraConfig] = []
+var _recompensa_elegida := false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_aplicar_estilo()
+	_crear_contenedor_recompensas()
 	btn_principal.pressed.connect(_al_pulsar_principal)
 	btn_menu.pressed.connect(_al_pulsar_menu)
 	call_deferred("_conectar_director")
@@ -63,6 +67,8 @@ func _conectar_director() -> void:
 	director.cuenta_regresiva.connect(_actualizar_cuenta_regresiva)
 	director.tiempo_cambiado.connect(_actualizar_tiempo)
 	director.campana_finalizada.connect(_mostrar_resultado)
+	director.recompensas_disponibles.connect(_mostrar_recompensas)
+	director.mejora_seleccionada.connect(_al_seleccionar_mejora)
 	_actualizar_puntaje(director.puntaje)
 	_actualizar_vidas(director.vidas)
 	_actualizar_tiempo(floori(director.tiempo_transcurrido))
@@ -71,6 +77,11 @@ func _conectar_director() -> void:
 
 func _actualizar_estado(nuevo: int) -> void:
 	estado_actual = nuevo
+	if is_instance_valid(_contenedor_recompensas):
+		_contenedor_recompensas.hide()
+	if nuevo == DirectorCampana.Estado.COMBATE or nuevo == DirectorCampana.Estado.MENU:
+		_opciones_recompensa.clear()
+		_recompensa_elegida = false
 	var mostrar_overlay := true
 	btn_menu.hide()
 	btn_principal.show()
@@ -110,12 +121,127 @@ func _actualizar_estado(nuevo: int) -> void:
 			btn_principal.text = "JUGAR DE NUEVO"
 			btn_menu.show()
 			btn_menu.text = "MENÚ PRINCIPAL"
+	if nuevo == DirectorCampana.Estado.INTERMISION and not _opciones_recompensa.is_empty() and not _recompensa_elegida:
+		_mostrar_recompensas(_opciones_recompensa)
 	_overlay_actualizar(mostrar_overlay)
 
 
 func _overlay_actualizar(mostrar: bool) -> void:
 	overlay.visible = mostrar
 	hud.visible = mostrar_hud and estado_actual != DirectorCampana.Estado.MENU
+
+
+func _crear_contenedor_recompensas() -> void:
+	_contenedor_recompensas = HBoxContainer.new()
+	_contenedor_recompensas.name = "OpcionesMejora"
+	_contenedor_recompensas.custom_minimum_size = Vector2(0.0, 156.0)
+	_contenedor_recompensas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_contenedor_recompensas.add_theme_constant_override("separation", 10)
+	_contenedor_recompensas.hide()
+
+	var contenido := $Overlay/Centro/Panel/Contenido as VBoxContainer
+	contenido.add_child(_contenedor_recompensas)
+	contenido.move_child(
+		_contenedor_recompensas,
+		btn_principal.get_index()
+	)
+
+
+func _mostrar_recompensas(opciones: Array[MejoraConfig]) -> void:
+	if estado_actual != DirectorCampana.Estado.INTERMISION:
+		return
+
+	_opciones_recompensa.clear()
+	for mejora in opciones:
+		if mejora != null:
+			_opciones_recompensa.append(mejora)
+
+	_recompensa_elegida = false
+	_limpiar_tarjetas_recompensa()
+	lbl_titulo.text = "ELIGE UNA MEJORA"
+	lbl_detalle.text = "La mejora elegida estará activa durante el siguiente combate."
+	btn_principal.hide()
+	btn_menu.hide()
+
+	for mejora in _opciones_recompensa:
+		_contenedor_recompensas.add_child(_crear_tarjeta_recompensa(mejora))
+
+	_contenedor_recompensas.show()
+
+
+func _crear_tarjeta_recompensa(mejora: MejoraConfig) -> Button:
+	var boton := Button.new()
+	boton.name = "Mejora_" + String(mejora.id)
+	boton.custom_minimum_size = Vector2(175.0, 156.0)
+	boton.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	boton.focus_mode = Control.FOCUS_ALL
+
+	var estilo := StyleBoxFlat.new()
+	estilo.bg_color = Color(0.10, 0.045, 0.04, 0.94)
+	estilo.border_color = Color(0.48, 0.27, 0.14, 1.0)
+	estilo.set_border_width_all(1)
+	estilo.set_border_width(SIDE_BOTTOM, 3)
+	boton.add_theme_stylebox_override("normal", estilo)
+
+	var encima := estilo.duplicate() as StyleBoxFlat
+	encima.bg_color = Color(0.22, 0.075, 0.045, 0.98)
+	boton.add_theme_stylebox_override("hover", encima)
+	boton.add_theme_stylebox_override("pressed", encima)
+
+	var margen := MarginContainer.new()
+	margen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	margen.add_theme_constant_override("margin_left", 10)
+	margen.add_theme_constant_override("margin_top", 8)
+	margen.add_theme_constant_override("margin_right", 10)
+	margen.add_theme_constant_override("margin_bottom", 8)
+	margen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	boton.add_child(margen)
+
+	var contenido := VBoxContainer.new()
+	contenido.add_theme_constant_override("separation", 8)
+	contenido.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margen.add_child(contenido)
+
+	var titulo := Label.new()
+	titulo.text = mejora.nombre
+	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	titulo.add_theme_color_override("font_color", Color(0.93, 0.83, 0.61))
+	titulo.add_theme_font_size_override("font_size", 16)
+	titulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	contenido.add_child(titulo)
+
+	var descripcion := Label.new()
+	descripcion.text = mejora.descripcion
+	descripcion.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	descripcion.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	descripcion.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	descripcion.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	descripcion.add_theme_color_override("font_color", Color(0.88, 0.79, 0.69))
+	descripcion.add_theme_font_size_override("font_size", 13)
+	descripcion.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	contenido.add_child(descripcion)
+
+	boton.pressed.connect(_solicitar_mejora.bind(mejora))
+	return boton
+
+
+func _solicitar_mejora(mejora: MejoraConfig) -> void:
+	if director == null or _recompensa_elegida:
+		return
+	director.seleccionar_mejora(mejora.id)
+
+
+func _al_seleccionar_mejora(mejora: MejoraConfig) -> void:
+	_recompensa_elegida = true
+	_contenedor_recompensas.hide()
+	lbl_titulo.text = "MEJORA SELECCIONADA"
+	lbl_detalle.text = "%s se aplicará en el siguiente combate." % mejora.nombre
+
+
+func _limpiar_tarjetas_recompensa() -> void:
+	for tarjeta in _contenedor_recompensas.get_children():
+		tarjeta.queue_free()
 
 
 func _actualizar_puntaje(actual: int) -> void:

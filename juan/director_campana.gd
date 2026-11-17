@@ -6,6 +6,12 @@ class_name DirectorCampana
 
 enum Estado { MENU, INTRO, INTRO_JEFE, COMBATE, INTERMISION, PAUSA, DERROTA, VICTORIA }
 
+const MEJORAS_DISPONIBLES = [
+	preload("res://juan/mejoras/impacto_reforzado.tres"),
+	preload("res://juan/mejoras/disparo_rapido.tres"),
+	preload("res://juan/mejoras/paso_ligero.tres"),
+]
+
 signal estado_cambiado(nuevo_estado: int)
 signal puntaje_cambiado(actual: int)
 signal vidas_cambiadas(actuales: int)
@@ -14,6 +20,8 @@ signal oleada_iniciada(indice: int, configuracion: OleadaConfig)
 signal cuenta_regresiva(segundos: int)
 signal tiempo_cambiado(segundos: int)
 signal campana_finalizada(victoria: bool, puntaje: int)
+signal recompensas_disponibles(opciones: Array[MejoraConfig])
+signal mejora_seleccionada(mejora: MejoraConfig)
 
 @export_group("Campaña")
 @export var oleadas: Array[OleadaConfig] = []
@@ -30,6 +38,9 @@ var tiempo_transcurrido: float = 0.0
 var _estado_antes_de_pausar: Estado = Estado.MENU
 var _ultimo_segundo_emitido: int = -1
 var _ultimo_segundo_partida: int = -1
+var _opciones_recompensa: Array[MejoraConfig] = []
+var _mejora_pendiente: MejoraConfig
+var _recompensa_elegida := false
 
 
 func _ready() -> void:
@@ -58,13 +69,14 @@ func _process(delta: float) -> void:
 			if tiempo_estado <= 0.0:
 				_activar_oleada_actual()
 		Estado.INTERMISION:
-			tiempo_estado = maxf(tiempo_estado - delta, 0.0)
-			var segundo := ceili(tiempo_estado)
-			if segundo != _ultimo_segundo_emitido:
-				_ultimo_segundo_emitido = segundo
-				cuenta_regresiva.emit(segundo)
-			if tiempo_estado <= 0.0:
-				_iniciar_siguiente_oleada()
+			if _opciones_recompensa.is_empty() or _recompensa_elegida:
+				tiempo_estado = maxf(tiempo_estado - delta, 0.0)
+				var segundo := ceili(tiempo_estado)
+				if segundo != _ultimo_segundo_emitido:
+					_ultimo_segundo_emitido = segundo
+					cuenta_regresiva.emit(segundo)
+				if tiempo_estado <= 0.0:
+					_iniciar_siguiente_oleada()
 
 
 func comenzar_campana() -> void:
@@ -77,6 +89,7 @@ func comenzar_campana() -> void:
 	vidas = vidas_iniciales
 	indice_oleada = -1
 	enemigos_por_derrotar = 0
+	_limpiar_recompensa()
 	tiempo_transcurrido = 0.0
 	_ultimo_segundo_partida = -1
 	tiempo_cambiado.emit(0)
@@ -147,6 +160,34 @@ func otorgar_vida(cantidad: int = 1) -> void:
 	vidas_cambiadas.emit(vidas)
 
 
+func seleccionar_mejora(id_mejora: StringName) -> bool:
+	if estado != Estado.INTERMISION or _recompensa_elegida:
+		return false
+
+	for mejora in _opciones_recompensa:
+		if mejora != null and mejora.id == id_mejora:
+			_mejora_pendiente = mejora
+			_recompensa_elegida = true
+			mejora_seleccionada.emit(mejora)
+			_ultimo_segundo_emitido = ceili(tiempo_estado)
+			cuenta_regresiva.emit(_ultimo_segundo_emitido)
+			return true
+
+	return false
+
+
+func consumir_mejora_pendiente() -> MejoraConfig:
+	var mejora := _mejora_pendiente
+	_mejora_pendiente = null
+	return mejora
+
+
+func _limpiar_recompensa() -> void:
+	_opciones_recompensa.clear()
+	_mejora_pendiente = null
+	_recompensa_elegida = false
+
+
 func reiniciar_campana() -> void:
 	comenzar_campana()
 
@@ -157,6 +198,7 @@ func volver_al_menu() -> void:
 	puntaje = 0
 	indice_oleada = -1
 	enemigos_por_derrotar = 0
+	_limpiar_recompensa()
 	tiempo_transcurrido = 0.0
 	_ultimo_segundo_partida = -1
 	tiempo_cambiado.emit(0)
@@ -194,13 +236,28 @@ func _completar_oleada() -> void:
 	if indice_oleada + 1 >= oleadas.size():
 		_finalizar(true)
 		return
-	tiempo_estado = oleadas[indice_oleada].pausa_antes_de_la_siguiente
+
+	var oleada_actual := oleadas[indice_oleada]
+	tiempo_estado = oleada_actual.pausa_antes_de_la_siguiente
 	if tiempo_estado <= 0.0:
 		_iniciar_siguiente_oleada()
 		return
+
 	_ultimo_segundo_emitido = -1
 	_cambiar_estado(Estado.INTERMISION)
 	cuenta_regresiva.emit(ceili(tiempo_estado))
+
+	if oleada_actual.es_jefe:
+		_limpiar_recompensa()
+		return
+
+	_opciones_recompensa.clear()
+	for mejora in MEJORAS_DISPONIBLES:
+		if mejora is MejoraConfig:
+			_opciones_recompensa.append(mejora)
+
+	_recompensa_elegida = false
+	recompensas_disponibles.emit(_opciones_recompensa)
 
 
 func _sumar_puntos(cantidad: int) -> void:

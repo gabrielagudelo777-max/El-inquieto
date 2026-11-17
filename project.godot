@@ -22,11 +22,11 @@ window/stretch/mode="canvas_items"
 
 move_left={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":65), Object(InputEventKey,"physical_keycode":4194311)]
+"events": [Object(InputEventKey,"physical_keycode":65), Object(InputEventKey,"physical_keycode":4194319)]
 }
 move_right={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":68), Object(InputEventKey,"physical_keycode":4194313)]
+"events": [Object(InputEventKey,"physical_keycode":68), Object(InputEventKey,"physical_keycode":4194321)]
 }
 move_forward={
 "deadzone": 0.5,

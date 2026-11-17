@@ -2,7 +2,6 @@ extends Node2D
 
 const TILE_GRAFICO = preload("res://assets/arena_isometrica/suelos_hades/tiles_piso.png")
 const RUINA_CIRCULAR = preload("res://assets/arena_isometrica/ruinas/01.png")
-const RUINA_MURO = preload("res://assets/arena_isometrica/ruinas/04.png")
 const RUINA_PILAR = preload("res://assets/arena_isometrica/ruinas/09.png")
 const RUINAS = [
 	preload("res://assets/arena_isometrica/ruinas_completo/02.png"),
@@ -323,9 +322,13 @@ func _crear_pilar(posicion: Vector2, color_nucleo: Color) -> void:
 	pilar.position = posicion
 	pilar.collision_layer = 1
 	pilar.collision_mask = 1
-	var base := CollisionPolygon2D.new()
-	base.polygon = PackedVector2Array([Vector2(-30, 0), Vector2(0, -16), Vector2(30, 0), Vector2(0, 16)])
-	pilar.add_child(base)
+	var colision := CollisionShape2D.new()
+	colision.name = "ColisionBase"
+	colision.debug_color = Color(0.2, 1.0, 0.35, 1.0)
+	var forma := RectangleShape2D.new()
+	forma.size = Vector2(60.0, 32.0)
+	colision.shape = forma
+	pilar.add_child(colision)
 	var base_visual := Sprite2D.new()
 	base_visual.texture = PILAR_BASE_TINTA
 	base_visual.position = Vector2(0, 0)

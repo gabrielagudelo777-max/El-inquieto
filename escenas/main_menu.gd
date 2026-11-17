@@ -34,12 +34,12 @@ func _on_play_pressed() -> void:
 func _on_controls_pressed() -> void:
 	_mostrar_info(
 		"CONTROLES",
-		"MOVERSE: WASD o flechas\nDISPARAR: Espacio (al objetivo más cercano)\nDASH: Shift\nVOLVER AL MENÚ: Esc"
+		"MOVERSE: WASD o flechas\nCORRER: Ctrl\nDISPARAR: Espacio (al objetivo más cercano)\nDASH: Shift\nVOLVER AL MENÚ: Esc"
 	)
 
 
 func _on_credits_pressed() -> void:
-	_mostrar_info("CREDITOS", "EL INQUIETO: ASALTO\n\nUn arcade de supervivencia en una arena 3D.")
+	_mostrar_info("CRÉDITOS", "EL INQUIETO: ASALTO\n\nUn arcade de supervivencia en una arena isométrica 2D.")
 
 
 func _mostrar_info(titulo: String, descripcion: String) -> void:

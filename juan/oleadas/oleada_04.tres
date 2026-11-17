@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="OleadaConfig" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="OleadaConfig" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://juan/oleada_config.gd" id="1_config"]
+[ext_resource type="PackedScene" uid="uid://07difqjwrs8x" path="res://juan/enemigo_isometrico.tscn" id="2_enemy"]
 
 [resource]
 script = ExtResource("1_config")
+escena_enemigo = ExtResource("2_enemy")
 nombre = "Presión creciente"
 cantidad_enemigos = 10
 intervalo_aparicion = 0.7

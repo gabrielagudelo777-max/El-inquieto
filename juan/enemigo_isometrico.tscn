@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://07difqjwrs8x"]
+
+[ext_resource type="Script" uid="uid://bnyadq16t33kj" path="res://juan/enemigo_isometrico.gd" id="1_5u734"]
+
+[node name="EnemigoIsometrico" type="CharacterBody2D" unique_id=255989911]
+script = ExtResource("1_5u734")

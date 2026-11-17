@@ -430,18 +430,45 @@ func _iniciar_oleada(indice: int, configuracion: OleadaConfig) -> void:
 
 
 func _aparecer_enemigo() -> void:
-	var enemigo := CharacterBody2D.new()
+	var enemigo: CharacterBody2D
+
+	if _configuracion.escena_enemigo != null:
+		enemigo = _configuracion.escena_enemigo.instantiate() as CharacterBody2D
+
+	if enemigo == null or not enemigo.has_method("configurar"):
+		push_error(
+			"Escena de enemigo inválida en la configuración: "
+			+ _configuracion.nombre
+		)
+
+		if is_instance_valid(enemigo):
+			enemigo.free()
+
+		enemigo = CharacterBody2D.new()
+		enemigo.set_script(SCRIPT_ENEMIGO)
+
 	enemigo.name = "Amenaza_%02d" % get_tree().get_nodes_in_group("enemigos").size()
-	enemigo.set_script(SCRIPT_ENEMIGO)
-	enemigo.call("configurar", _configuracion.rapidez_formacion, _configuracion.puntos_por_enemigo, _configuracion.es_jefe)
+	enemigo.call(
+		"configurar",
+		_configuracion.rapidez_formacion,
+		_configuracion.puntos_por_enemigo,
+		_configuracion.es_jefe
+	)
+
 	var borde := randi_range(0, 3)
 	match borde:
-		0: enemigo.position = Vector2(randf_range(-300, 300), -285)
-		1: enemigo.position = Vector2(randf_range(-300, 300), 285)
-		2: enemigo.position = Vector2(-500, randf_range(-250, 250))
-		_: enemigo.position = Vector2(500, randf_range(-250, 250))
+		0:
+			enemigo.position = Vector2(randf_range(-300, 300), -285)
+		1:
+			enemigo.position = Vector2(randf_range(-300, 300), 285)
+		2:
+			enemigo.position = Vector2(-500, randf_range(-250, 250))
+		_:
+			enemigo.position = Vector2(500, randf_range(-250, 250))
+
 	if _configuracion.es_jefe:
 		enemigo.scale = Vector2(1.7, 1.7)
+
 	_entidades.add_child(enemigo)
 
 
@@ -599,7 +626,11 @@ func _actualizar_hud() -> void:
 		var segundos := floori(_director.tiempo_transcurrido)
 		_puntaje.text = "%06d  ·  %02d:%02d" % [_director.puntaje, floori(float(segundos) / 60.0), segundos % 60]
 	if is_instance_valid(_amenazas):
-		_amenazas.text = "AMENAZAS  %02d" % get_tree().get_nodes_in_group("enemigos").size()
+		var enemigos_activos := get_tree().get_nodes_in_group("enemigos").size()
+		_amenazas.text = "ACTIVOS %02d · POR LLEGAR %02d" % [
+			enemigos_activos,
+			_enemigos_restantes
+		]
 	if is_instance_valid(_integridad) and is_instance_valid(_jugador):
 		_integridad.value = _jugador.get("integridad")
 

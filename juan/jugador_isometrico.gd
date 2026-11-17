@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 signal integridad_cambiada(actual: float)
+signal murio
 
 const PROYECTIL = preload("res://juan/proyectil_isometrico.tscn")
 const PERSONAJE = preload("res://assets/personajes_nuevos/jugador_armadura.png")
@@ -9,25 +10,34 @@ const TAMANO_CELDA := 256
 @export var velocidad := 280.0
 @export var velocidad_correr := 390.0
 @export var velocidad_esquive := 720.0
+@export var integridad_maxima := 100.0
+@export var duracion_invulnerabilidad := 0.75
+@export var duracion_esquive := 0.18
+@export var enfriamiento_esquive := 0.75
+@export var punto_reaparicion := Vector2(0.0, 210.0)
 
 var integridad := 100.0
 var _director: DirectorCampana
 var _sprite: Sprite2D
 var _direccion_esquive := Vector2.ZERO
+var _direccion_mirada := Vector2.RIGHT
 var _enfriamiento_esquive := 0.0
 var _tiempo_esquive := 0.0
 var _enfriamiento_disparo := 0.0
 var _tiempo_ataque := 0.0
 var _tiempo_dano := 0.0
+var _tiempo_invulnerabilidad := 0.0
 var _tiempo_animacion := 0.0
 var _cuadro := 0
 var _fila := 2
+var _muerto := false
 
 
 func _ready() -> void:
 	add_to_group("jugador")
 	collision_layer = 1
 	collision_mask = 1
+	integridad = integridad_maxima
 
 	var base := CollisionPolygon2D.new()
 	base.polygon = PackedVector2Array([
@@ -52,6 +62,13 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _muerto:
+		velocity = Vector2.ZERO
+		return
+
+	if _director == null:
+		_conectar_director()
+
 	if _director != null and _director.estado != DirectorCampana.Estado.COMBATE:
 		velocity = Vector2.ZERO
 		return
@@ -61,10 +78,12 @@ func _physics_process(delta: float) -> void:
 	_tiempo_esquive = maxf(_tiempo_esquive - delta, 0.0)
 	_tiempo_ataque = maxf(_tiempo_ataque - delta, 0.0)
 	_tiempo_dano = maxf(_tiempo_dano - delta, 0.0)
+	_tiempo_invulnerabilidad = maxf(_tiempo_invulnerabilidad - delta, 0.0)
 
 	_tiempo_animacion += delta
 	var corriendo := Input.is_action_pressed("correr")
 	var intervalo_animacion := 0.09 if corriendo else 0.12
+
 	if _tiempo_animacion >= intervalo_animacion:
 		_tiempo_animacion = 0.0
 		_cuadro = (_cuadro + 1) % 4
@@ -81,14 +100,25 @@ func _physics_process(delta: float) -> void:
 	).normalized()
 
 	if movimiento.length_squared() > 0.0:
+		_direccion_mirada = movimiento
 		_fila = _fila_para_direccion(movimiento)
 
-	if Input.is_action_just_pressed("dash") and _enfriamiento_esquive <= 0.0:
+	if (
+		Input.is_action_just_pressed("dash")
+		and _enfriamiento_esquive <= 0.0
+	):
 		_direccion_esquive = (
-			movimiento if movimiento.length_squared() > 0.0 else Vector2.RIGHT
+			movimiento
+			if movimiento.length_squared() > 0.0
+			else _direccion_mirada
 		)
-		_tiempo_esquive = 0.18
-		_enfriamiento_esquive = 0.75
+		_direccion_mirada = _direccion_esquive
+		_tiempo_esquive = duracion_esquive
+		_enfriamiento_esquive = enfriamiento_esquive
+		_tiempo_invulnerabilidad = maxf(
+			_tiempo_invulnerabilidad,
+			duracion_esquive
+		)
 
 	if _tiempo_esquive > 0.0:
 		velocity = _direccion_esquive * velocidad_esquive
@@ -113,20 +143,48 @@ func _physics_process(delta: float) -> void:
 
 
 func recibir_dano(cantidad: float) -> void:
+	if cantidad <= 0.0 or _muerto:
+		return
+
+	if _director == null:
+		_conectar_director()
+
+	if _director == null or _director.estado != DirectorCampana.Estado.COMBATE:
+		return
+
+	if _tiempo_invulnerabilidad > 0.0:
+		return
+
 	integridad = maxf(integridad - cantidad, 0.0)
-	integridad_cambiada.emit(integridad)
 	_tiempo_dano = 0.2
+	_tiempo_invulnerabilidad = duracion_invulnerabilidad
+	integridad_cambiada.emit(integridad)
 
 	if integridad <= 0.0:
-		if _director == null:
-			_conectar_director()
+		_muerto = true
+		velocity = Vector2.ZERO
+		murio.emit()
 
-		if _director != null:
-			_director.recibir_impacto()
 
-			if _director.vidas > 0:
-				integridad = 100.0
-				integridad_cambiada.emit(integridad)
+func reaparecer() -> void:
+	if not _muerto:
+		return
+
+	if _director == null:
+		_conectar_director()
+
+	if _director == null or _director.estado != DirectorCampana.Estado.COMBATE:
+		return
+
+	position = punto_reaparicion
+	velocity = Vector2.ZERO
+	integridad = integridad_maxima
+	_muerto = false
+	_tiempo_esquive = 0.0
+	_tiempo_dano = 0.0
+	_tiempo_invulnerabilidad = duracion_invulnerabilidad
+	_sprite.modulate = Color.WHITE
+	integridad_cambiada.emit(integridad)
 
 
 func _disparar() -> void:
@@ -146,6 +204,7 @@ func _disparar() -> void:
 	proyectil.call("configurar", direccion)
 
 	_tiempo_ataque = 0.24
+	_direccion_mirada = direccion
 	_fila = _fila_para_direccion(direccion)
 
 
@@ -175,11 +234,16 @@ func _actualizar_sprite(movimiento: Vector2) -> void:
 		TAMANO_CELDA,
 		TAMANO_CELDA
 	)
-	_sprite.modulate = (
-		Color(1.0, 0.48, 0.42)
-		if _tiempo_dano > 0.0
-		else Color.WHITE
-	)
+
+	var opacidad := 1.0
+	if _tiempo_invulnerabilidad > 0.0:
+		var fase_parpadeo := int(_tiempo_invulnerabilidad / 0.08)
+		if fase_parpadeo % 2 == 0:
+			opacidad = 0.45
+
+	var color := Color(1.0, 0.48, 0.42) if _tiempo_dano > 0.0 else Color.WHITE
+	color.a = opacidad
+	_sprite.modulate = color
 
 
 func _buscar_objetivo() -> Node2D:

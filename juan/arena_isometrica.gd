@@ -46,6 +46,7 @@ var _reloj_aparicion := 0.0
 var _indice_sala := 0
 var _puntaje: Label
 var _amenazas: Label
+var _vidas: Label
 var _zona: Label
 var _oleada: Label
 var _integridad: ProgressBar
@@ -396,12 +397,22 @@ func _crear_director_y_hud() -> void:
 			_director.oleadas.append(configuracion)
 	add_child(_director)
 	_director.oleada_iniciada.connect(_iniciar_oleada)
+	_director.vidas_cambiadas.connect(_actualizar_vidas)
+	_jugador.connect("murio", Callable(self, "_al_morir_jugador"))
 	var interfaz := UI_CAMPANA.instantiate()
 	interfaz.set("mostrar_hud", false)
 	add_child(interfaz)
 	_crear_hud()
 	_director.comenzar_campana()
 
+func _al_morir_jugador() -> void:
+	if _director == null or not is_instance_valid(_jugador):
+		return
+
+	_director.recibir_impacto()
+
+	if _director.vidas > 0:
+		_jugador.call("reaparecer")
 
 func _iniciar_oleada(indice: int, configuracion: OleadaConfig) -> void:
 	_indice_sala = indice - 1
@@ -461,6 +472,8 @@ func _crear_hud() -> void:
 	_puntaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_amenazas = _crear_texto(capa, "AMENAZAS  00", Rect2(1020, 49, 230, 20), 10, Color(0.78, 0.77, 0.62))
 	_amenazas.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_vidas = _crear_texto(capa, "VIDAS  %02d" % _director.vidas, Rect2(1020, 72, 230, 20), 10, Color(0.85, 0.74, 0.60))
+	_vidas.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_crear_texto(capa, "INTEGRIDAD", Rect2(1032, 662, 212, 17), 9, Color(0.85, 0.74, 0.60))
 	_integridad = ProgressBar.new()
 	_integridad.position = Vector2(1032, 682)
@@ -594,3 +607,8 @@ func _actualizar_hud() -> void:
 func _actualizar_integridad(actual: float) -> void:
 	if is_instance_valid(_integridad):
 		_integridad.value = actual
+
+
+func _actualizar_vidas(actuales: int) -> void:
+	if is_instance_valid(_vidas):
+		_vidas.text = "VIDAS  %02d" % actuales

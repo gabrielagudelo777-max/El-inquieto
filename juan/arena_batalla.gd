@@ -7,7 +7,6 @@ const EMBLEMA_NAVE = "res://assets/naves_larzes/Ship_1_A_Medium.png"
 const EMBLEMA_JEFE = "res://assets/naves_larzes/Boss_1_A_Medium.png"
 const EMBLEMA_ALIEN = "res://assets/naves_larzes/Enemy_1_A_Medium.png"
 const EMBLEMA_ALIEN_SECUNDARIO = "res://assets/naves_larzes/Enemy_4_B_Medium.png"
-const PANEL_HUD = "res://assets/1. Free Hologram Interface Wenrexa/1. Free Hologram Interface Wenrexa/Card X1/Panel Empty Green.png"
 const TIPOGRAFIA = "res://assets/fonts/CinzelDecorative-Regular.ttf"
 const SCRIPT_JUGADOR = preload("res://juan/jugador_batalla.gd")
 const SCRIPT_ALIEN = preload("res://juan/enemigo_batalla.gd")
@@ -463,22 +462,21 @@ func _crear_interfaz() -> void:
 	var capa := CanvasLayer.new()
 	capa.name = "InterfazArena"
 	add_child(capa)
-	var textura := load(PANEL_HUD) as Texture2D
 	var fuente := load(TIPOGRAFIA) as Font
 
-	var panel_titulo := _crear_panel(capa, Rect2(24, 22, 390, 104), textura)
+	var panel_titulo := _crear_panel(capa, Rect2(24, 22, 390, 104))
 	_crear_etiqueta(panel_titulo, "EL INQUIETO", Vector2(22, 14), Vector2(345, 34), fuente, 23, Color(0.93, 0.83, 0.61))
-	_crear_etiqueta(panel_titulo, "ZONA DE CONTENCIÓN  //  SECTOR 01", Vector2(24, 58), Vector2(340, 22), fuente, 12, Color(0.49, 0.81, 0.94))
+	_crear_etiqueta(panel_titulo, "ZONA DE CONTENCIÓN  ·  SECTOR 01", Vector2(24, 58), Vector2(340, 22), fuente, 12, Color(0.76, 0.65, 0.52))
 
-	var panel_amenazas := _crear_panel(capa, Rect2(915, 22, 340, 104), textura)
-	_crear_etiqueta(panel_amenazas, "LECTURA DE RADAR", Vector2(20, 14), Vector2(295, 24), fuente, 14, Color(0.70, 0.82, 0.90))
+	var panel_amenazas := _crear_panel(capa, Rect2(915, 22, 340, 104))
+	_crear_etiqueta(panel_amenazas, "LECTURA DE RADAR", Vector2(20, 14), Vector2(295, 24), fuente, 14, Color(0.82, 0.75, 0.65))
 	_etiqueta_enemigos = _crear_etiqueta(panel_amenazas, "AMENAZAS  05", Vector2(20, 48), Vector2(295, 34), fuente, 21, Color(1.0, 0.58, 0.43))
 
-	var panel_controles := _crear_panel(capa, Rect2(24, 626, 595, 68), textura)
-	_crear_etiqueta(panel_controles, "WASD / FLECHAS  MOVER     SHIFT  ESQUIVAR     ESPACIO  DISPARAR", Vector2(18, 18), Vector2(555, 30), fuente, 12, Color(0.79, 0.87, 0.90))
+	var panel_controles := _crear_panel(capa, Rect2(24, 626, 595, 68))
+	_crear_etiqueta(panel_controles, "WASD / FLECHAS  MOVER     SHIFT  ESQUIVAR     ESPACIO  DISPARAR", Vector2(18, 18), Vector2(555, 30), fuente, 12, Color(0.84, 0.79, 0.72))
 
-	var panel_integridad := _crear_panel(capa, Rect2(920, 613, 335, 81), textura)
-	_crear_etiqueta(panel_integridad, "INTEGRIDAD DEL TRAJE", Vector2(18, 9), Vector2(295, 23), fuente, 12, Color(0.79, 0.87, 0.90))
+	var panel_integridad := _crear_panel(capa, Rect2(920, 613, 335, 81))
+	_crear_etiqueta(panel_integridad, "INTEGRIDAD DEL TRAJE", Vector2(18, 9), Vector2(295, 23), fuente, 12, Color(0.84, 0.79, 0.72))
 	_barra_integridad = ProgressBar.new()
 	_barra_integridad.position = Vector2(18, 39)
 	_barra_integridad.size = Vector2(292, 20)
@@ -486,14 +484,14 @@ func _crear_interfaz() -> void:
 	_barra_integridad.value = 100.0
 	_barra_integridad.show_percentage = false
 	var fondo_barra := StyleBoxFlat.new()
-	fondo_barra.bg_color = Color(0.035, 0.08, 0.13, 0.95)
+	fondo_barra.bg_color = Color(0.08, 0.035, 0.045, 0.98)
 	fondo_barra.corner_radius_top_left = 4
 	fondo_barra.corner_radius_top_right = 4
 	fondo_barra.corner_radius_bottom_left = 4
 	fondo_barra.corner_radius_bottom_right = 4
 	_barra_integridad.add_theme_stylebox_override("background", fondo_barra)
 	var relleno_barra := StyleBoxFlat.new()
-	relleno_barra.bg_color = Color(0.10, 0.70, 0.93)
+	relleno_barra.bg_color = Color(0.72, 0.25, 0.20)
 	relleno_barra.corner_radius_top_left = 4
 	relleno_barra.corner_radius_top_right = 4
 	relleno_barra.corner_radius_bottom_left = 4
@@ -501,15 +499,17 @@ func _crear_interfaz() -> void:
 	_barra_integridad.add_theme_stylebox_override("fill", relleno_barra)
 	panel_integridad.add_child(_barra_integridad)
 
-func _crear_panel(parent: Node, rectangulo: Rect2, textura: Texture2D) -> NinePatchRect:
-	var panel := NinePatchRect.new()
+func _crear_panel(parent: Node, rectangulo: Rect2) -> Panel:
+	var panel := Panel.new()
 	panel.position = rectangulo.position
 	panel.size = rectangulo.size
-	panel.texture = textura
-	panel.patch_margin_left = 18
-	panel.patch_margin_top = 18
-	panel.patch_margin_right = 18
-	panel.patch_margin_bottom = 18
+	var estilo := StyleBoxFlat.new()
+	estilo.bg_color = Color(0.055, 0.026, 0.034, 0.91)
+	estilo.border_color = Color(0.56, 0.34, 0.20, 0.95)
+	estilo.set_border_width_all(1)
+	estilo.set_border_width(SIDE_BOTTOM, 3)
+	estilo.set_corner_radius_all(3)
+	panel.add_theme_stylebox_override("panel", estilo)
 	parent.add_child(panel)
 	return panel
 

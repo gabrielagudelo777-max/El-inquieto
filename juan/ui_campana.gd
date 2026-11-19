@@ -11,6 +11,7 @@ const NOMBRES_CAMARAS := [
 	"Pasaje de los Ecos",
 	"Salón del Vigía",
 ]
+const FUENTE_UI = preload("res://assets/fonts/CinzelDecorative-Regular.ttf")
 
 @onready var hud: Control = $HUD
 @onready var lbl_vidas: Label = $HUD/Barra/Fila/Vidas
@@ -18,6 +19,7 @@ const NOMBRES_CAMARAS := [
 @onready var lbl_puntaje: Label = $HUD/Barra/Fila/Puntaje
 @onready var lbl_tiempo: Label = $HUD/Barra/Fila/Tiempo
 @onready var overlay: Control = $Overlay
+@onready var lbl_sello: Label = $Overlay/Centro/Panel/Contenido/Sello
 @onready var lbl_titulo: Label = $Overlay/Centro/Panel/Contenido/Titulo
 @onready var lbl_detalle: Label = $Overlay/Centro/Panel/Contenido/Detalle
 @onready var btn_principal: Button = $Overlay/Centro/Panel/Contenido/BotonPrincipal
@@ -87,8 +89,9 @@ func _actualizar_estado(nuevo: int) -> void:
 	btn_principal.show()
 	match nuevo:
 		DirectorCampana.Estado.MENU:
+			lbl_sello.text = "DESCENSO A LA ARENA"
 			lbl_titulo.text = "EL INQUIETO"
-			lbl_detalle.text = "ASALTO // PROTOTIPO PARA PC\n\nSobrevive a las formaciones. Muévete, dispara y encuentra el momento para esquivar.\n\nWASD o flechas: mover   ·   Espacio: disparar\nCtrl: correr   ·   Shift: dash   ·   Esc: pausa"
+			lbl_detalle.text = "ASALTO ARCADE\n\nSobrevive a las formaciones. Muévete, dispara y encuentra el momento para esquivar.\n\nWASD / FLECHAS  ·  MOVER\nESPACIO  ·  DISPARAR\nCTRL  ·  CORRER     SHIFT  ·  ESQUIVAR\nESC  ·  PAUSA"
 			btn_principal.text = "INICIAR CAMPAÑA"
 		DirectorCampana.Estado.INTRO:
 			mostrar_overlay = false
@@ -100,27 +103,35 @@ func _actualizar_estado(nuevo: int) -> void:
 		DirectorCampana.Estado.COMBATE:
 			mostrar_overlay = false
 		DirectorCampana.Estado.INTERMISION:
+			lbl_sello.text = "EL UMBRAL ENTRE COMBATES"
 			lbl_titulo.text = "SALA COMPLETADA"
 			lbl_detalle.text = "El siguiente portal se abrirá en un momento."
 			btn_principal.hide()
 		DirectorCampana.Estado.PAUSA:
+			lbl_sello.text = "EL TIEMPO SE DETIENE"
 			lbl_titulo.text = "PAUSA"
 			lbl_detalle.text = "La partida está detenida."
 			btn_principal.text = "CONTINUAR"
 			btn_menu.show()
 			btn_menu.text = "VOLVER AL MENÚ"
 		DirectorCampana.Estado.DERROTA:
-			lbl_titulo.text = "FIN DE LA PARTIDA"
+			lbl_sello.text = "CAMPAÑA INTERRUMPIDA"
+			lbl_titulo.text = "DERROTA"
 			lbl_detalle.text = ""
 			btn_principal.text = "REINTENTAR"
 			btn_menu.show()
 			btn_menu.text = "MENÚ PRINCIPAL"
 		DirectorCampana.Estado.VICTORIA:
-			lbl_titulo.text = "¡VICTORIA!"
+			lbl_sello.text = "EL CICLO HA SIDO ROTO"
+			lbl_titulo.text = "VICTORIA"
 			lbl_detalle.text = "La arena vuelve a estar en calma."
 			btn_principal.text = "JUGAR DE NUEVO"
 			btn_menu.show()
 			btn_menu.text = "MENÚ PRINCIPAL"
+	if nuevo == DirectorCampana.Estado.DERROTA:
+		lbl_titulo.add_theme_color_override("font_color", Color(0.82, 0.43, 0.31))
+	else:
+		lbl_titulo.add_theme_color_override("font_color", Color(0.93, 0.83, 0.61))
 	if nuevo == DirectorCampana.Estado.INTERMISION and not _opciones_recompensa.is_empty() and not _recompensa_elegida:
 		_mostrar_recompensas(_opciones_recompensa)
 	_overlay_actualizar(mostrar_overlay)
@@ -270,22 +281,34 @@ func _aplicar_estilo() -> void:
 	panel.border_color = Color(0.50, 0.31, 0.17, 0.9)
 	panel.set_border_width_all(1)
 	panel.set_border_width(SIDE_BOTTOM, 3)
-	panel.set_content_margin_all(30)
+	panel.set_corner_radius_all(3)
+	panel.set_content_margin_all(34)
 	$Overlay/Centro/Panel.add_theme_stylebox_override("panel", panel)
+	lbl_sello.add_theme_font_override("font", FUENTE_UI)
+	lbl_sello.add_theme_font_size_override("font_size", 12)
+	lbl_sello.add_theme_color_override("font_color", Color(0.72, 0.52, 0.37))
+	lbl_titulo.add_theme_font_override("font", FUENTE_UI)
+	lbl_detalle.add_theme_color_override("font_color", Color(0.91, 0.86, 0.77))
 
 	for boton in [btn_principal, btn_menu]:
+		boton.add_theme_font_override("font", FUENTE_UI)
 		var normal := StyleBoxFlat.new()
-		normal.bg_color = Color(0.10, 0.045, 0.04, 0.82)
-		normal.border_color = Color(0.48, 0.27, 0.14)
+		normal.bg_color = Color(0.11, 0.045, 0.043, 0.92)
+		normal.border_color = Color(0.48, 0.29, 0.18)
+		normal.set_border_width_all(1)
 		normal.set_border_width(SIDE_BOTTOM, 2)
+		normal.set_corner_radius_all(2)
 		normal.set_content_margin_all(10)
 		var encima := normal.duplicate() as StyleBoxFlat
 		encima.bg_color = Color(0.22, 0.075, 0.045, 0.94)
+		encima.border_color = Color(0.78, 0.53, 0.31)
 		boton.add_theme_stylebox_override("normal", normal)
 		boton.add_theme_stylebox_override("hover", encima)
+		boton.add_theme_stylebox_override("focus", encima)
 		boton.add_theme_stylebox_override("pressed", normal)
-		boton.add_theme_color_override("font_color", Color(0.88, 0.75, 0.57))
-		boton.add_theme_color_override("font_hover_color", Color(1.0, 0.89, 0.67))
+		boton.add_theme_color_override("font_color", Color(0.91, 0.78, 0.60))
+		boton.add_theme_color_override("font_hover_color", Color(0.98, 0.88, 0.70))
+		boton.add_theme_color_override("font_focus_color", Color(0.98, 0.88, 0.70))
 
 
 func _actualizar_tiempo(segundos: int) -> void:
@@ -295,10 +318,23 @@ func _actualizar_tiempo(segundos: int) -> void:
 
 
 func _mostrar_resultado(victoria: bool, puntaje: int) -> void:
+	var segundos := floori(director.tiempo_transcurrido) if director != null else 0
+	var minutos := floori(float(segundos) / 60.0)
+	var resto := segundos % 60
+	var indice := director.indice_oleada if director != null else 0
+	var total := director.oleadas.size() if director != null else 0
 	if victoria:
-		lbl_detalle.text = "Campaña completada\nPuntaje: %06d" % puntaje
+		lbl_detalle.text = "EL ASEDIADOR HA CAÍDO\n\nPUNTAJE   %06d\nRECORRIDO   %02d / %02d\nDURACIÓN   %02d:%02d" % [
+			puntaje, total, total, minutos, resto
+		]
 	else:
-		lbl_detalle.text = "Puntaje: %06d" % puntaje
+		var sala := ""
+		if director != null and indice >= 0 and indice < director.oleadas.size():
+			sala = "\n" + director.oleadas[indice].nombre.to_upper()
+		lbl_detalle.text = "LA ARENA TE HA VENCIDO%s\n\nPUNTAJE   %06d\nTRAMO   %02d / %02d\nDURACIÓN   %02d:%02d" % [
+			sala, puntaje, indice + 1, total, minutos, resto
+		]
+	btn_principal.grab_focus()
 
 
 func _al_pulsar_principal() -> void:

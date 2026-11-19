@@ -5,12 +5,13 @@ extends Control
 @onready var credits_button: TextureButton = $MenuPanel/MarginContainer/VBoxContainer/CreditsButton
 @onready var quit_button: TextureButton = $MenuPanel/MarginContainer/VBoxContainer/QuitButton
 @onready var info_dimmer: ColorRect = $InfoDimmer
-@onready var info_panel: NinePatchRect = $InfoPanel
+@onready var info_panel: Panel = $InfoPanel
 @onready var info_title: Label = $InfoPanel/MarginContainer/VBoxContainer/Title
 @onready var info_text: Label = $InfoPanel/MarginContainer/VBoxContainer/Description
 @onready var close_button: TextureButton = $InfoPanel/MarginContainer/VBoxContainer/CloseButton
 
 var _info_visible := false
+var _boton_origen: TextureButton
 
 func _ready() -> void:
 	play_button.pressed.connect(_on_play_pressed)
@@ -22,7 +23,22 @@ func _ready() -> void:
 	for button in [play_button, controls_button, credits_button, quit_button, close_button]:
 		button.mouse_entered.connect(_animar_boton.bind(button, 1.04))
 		button.mouse_exited.connect(_animar_boton.bind(button, 1.0))
+		button.focus_entered.connect(_animar_boton.bind(button, 1.04))
+		button.focus_exited.connect(_animar_boton.bind(button, 1.0))
 
+	var estilo_info := StyleBoxFlat.new()
+	estilo_info.bg_color = Color(0.055, 0.026, 0.034, 0.97)
+	estilo_info.border_color = Color(0.56, 0.34, 0.20, 1.0)
+	estilo_info.set_border_width_all(1)
+	estilo_info.set_border_width(SIDE_BOTTOM, 3)
+	estilo_info.set_corner_radius_all(3)
+	estilo_info.shadow_color = Color(0.01, 0.005, 0.01, 0.75)
+	estilo_info.shadow_size = 18
+	info_panel.add_theme_stylebox_override("panel", estilo_info)
+	info_text.add_theme_color_override("font_color", Color(0.91, 0.86, 0.77))
+	info_text.add_theme_font_size_override("font_size", 18)
+	info_title.add_theme_color_override("font_color", Color(0.93, 0.83, 0.65))
+	call_deferred("_enfocar_jugar")
 	_animar_fondo()
 
 func _on_play_pressed() -> void:
@@ -34,15 +50,21 @@ func _on_play_pressed() -> void:
 func _on_controls_pressed() -> void:
 	_mostrar_info(
 		"CONTROLES",
-		"MOVERSE: WASD o flechas\nCORRER: Ctrl\nDISPARAR: Espacio (al objetivo más cercano)\nDASH: Shift\nVOLVER AL MENÚ: Esc"
+		"MOVERSE  ·  WASD / FLECHAS\nCORRER  ·  CTRL\nDISPARAR  ·  ESPACIO\nESQUIVAR  ·  SHIFT\nPAUSA  ·  ESC",
+		controls_button
 	)
 
 
 func _on_credits_pressed() -> void:
-	_mostrar_info("CRÉDITOS", "EL INQUIETO: ASALTO\n\nUn arcade de supervivencia en una arena isométrica 2D.")
+	_mostrar_info(
+		"CRÉDITOS",
+		"EL INQUIETO: ASALTO\n\nUn arcade de supervivencia en una arena isométrica 2D.",
+		credits_button
+	)
 
 
-func _mostrar_info(titulo: String, descripcion: String) -> void:
+func _mostrar_info(titulo: String, descripcion: String, boton_origen: TextureButton) -> void:
+	_boton_origen = boton_origen
 	info_title.text = titulo
 	info_text.text = descripcion
 	info_dimmer.show()
@@ -55,7 +77,16 @@ func _on_close_info_pressed() -> void:
 	info_dimmer.hide()
 	info_panel.hide()
 	_info_visible = false
-	controls_button.grab_focus()
+	if is_instance_valid(_boton_origen):
+		_boton_origen.grab_focus()
+	else:
+		play_button.grab_focus()
+	_boton_origen = null
+
+
+func _enfocar_jugar() -> void:
+	if is_instance_valid(play_button) and not _info_visible:
+		play_button.grab_focus()
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -46,8 +46,10 @@ var _enemigos_restantes := 0
 var _reloj_aparicion := 0.0
 var _indice_sala := 0
 var _puntaje: Label
+var _tiempo_hud: Label
 var _amenazas: Label
 var _vidas: Label
+var _texto_integridad: Label
 var _zona: Label
 var _oleada: Label
 var _integridad: ProgressBar
@@ -502,31 +504,58 @@ func _crear_hud() -> void:
 	var capa := CanvasLayer.new()
 	capa.layer = 10
 	add_child(capa)
-	var oro := Color(0.91, 0.78, 0.58)
-	_crear_texto(capa, "EL INQUIETO", Rect2(30, 20, 240, 30), 19, Color(0.97, 0.87, 0.68))
-	_zona = _crear_texto(capa, "ATRIO DE LAS CENIZAS", Rect2(31, 51, 340, 22), 10, Color(0.80, 0.64, 0.47))
-	_oleada = _crear_texto(capa, "OLEADA  01 / 06", Rect2(495, 24, 290, 28), 17, oro)
+	var oro := Color(0.88, 0.69, 0.46)
+	var marfil := Color(0.94, 0.87, 0.74)
+	var bronce := Color(0.72, 0.55, 0.42)
+	var fondo := _crear_panel(
+		capa,
+		Rect2(24, 15, 1232, 78),
+		Color(0.035, 0.018, 0.027, 0.84),
+		Color(0.48, 0.29, 0.18, 0.78)
+	)
+	var estilo_fondo := fondo.get_theme_stylebox("panel") as StyleBoxFlat
+	estilo_fondo.set_border_width_all(1)
+	estilo_fondo.set_border_width(SIDE_BOTTOM, 2)
+	estilo_fondo.set_corner_radius_all(3)
+	fondo.z_index = -1
+	_crear_divisor_hud(capa, Vector2(390, 31), Vector2(390, 77))
+	_crear_divisor_hud(capa, Vector2(815, 31), Vector2(815, 77))
+	_crear_texto(capa, "EL INQUIETO", Rect2(42, 23, 300, 28), 18, marfil)
+	_zona = _crear_texto(capa, "ATRIO DE LAS CENIZAS", Rect2(43, 53, 320, 18), 10, bronce)
+	_oleada = _crear_texto(capa, "OLEADA  01 / 06", Rect2(420, 25, 365, 27), 16, oro)
 	_oleada.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_puntaje = _crear_texto(capa, "000000  ·  00:00", Rect2(980, 22, 270, 24), 13, oro)
-	_puntaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_amenazas = _crear_texto(capa, "AMENAZAS  00", Rect2(1020, 49, 230, 20), 10, Color(0.78, 0.77, 0.62))
-	_amenazas.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_vidas = _crear_texto(capa, "VIDAS  %02d" % _director.vidas, Rect2(1020, 72, 230, 20), 10, Color(0.85, 0.74, 0.60))
+	_puntaje = _crear_texto(capa, "PUNTAJE  000000", Rect2(840, 24, 180, 22), 12, oro)
+	_tiempo_hud = _crear_texto(capa, "TIEMPO  00:00", Rect2(1040, 24, 190, 22), 12, marfil)
+	_tiempo_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_puntaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_amenazas = _crear_texto(capa, "AMENAZAS  00", Rect2(840, 53, 180, 18), 9, bronce)
+	_amenazas.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_vidas = _crear_texto(capa, "VIDAS  %02d" % _director.vidas, Rect2(1040, 53, 190, 18), 9, bronce)
 	_vidas.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_crear_texto(capa, "INTEGRIDAD", Rect2(1032, 662, 212, 17), 9, Color(0.85, 0.74, 0.60))
+	_texto_integridad = _crear_texto(capa, "VITALIDAD  100 / 100", Rect2(32, 648, 280, 20), 10, marfil)
 	_integridad = ProgressBar.new()
-	_integridad.position = Vector2(1032, 682)
-	_integridad.size = Vector2(212, 8)
+	_integridad.position = Vector2(32, 674)
+	_integridad.size = Vector2(280, 9)
 	_integridad.max_value = 100.0
 	_integridad.value = 100.0
 	_integridad.show_percentage = false
 	var fondo_barra := StyleBoxFlat.new()
-	fondo_barra.bg_color = Color(0.09, 0.055, 0.05, 0.9)
+	fondo_barra.bg_color = Color(0.045, 0.025, 0.029, 0.92)
+	fondo_barra.set_corner_radius_all(2)
 	_integridad.add_theme_stylebox_override("background", fondo_barra)
 	var relleno := StyleBoxFlat.new()
-	relleno.bg_color = Color(0.78, 0.26, 0.15)
+	relleno.bg_color = Color(0.72, 0.27, 0.17)
+	relleno.set_corner_radius_all(2)
 	_integridad.add_theme_stylebox_override("fill", relleno)
 	capa.add_child(_integridad)
+
+
+func _crear_divisor_hud(parent: Node, desde: Vector2, hasta: Vector2) -> void:
+	var divisor := Line2D.new()
+	divisor.points = PackedVector2Array([desde, hasta])
+	divisor.width = 1.0
+	divisor.default_color = Color(0.58, 0.36, 0.22, 0.55)
+	parent.add_child(divisor)
 
 
 func _crear_panel(parent: Node, rectangulo: Rect2, color: Color, borde: Color) -> Panel:
@@ -635,8 +664,10 @@ func _actualizar_hud() -> void:
 	if _director == null:
 		return
 	if is_instance_valid(_puntaje):
+		_puntaje.text = "PUNTAJE  %06d" % _director.puntaje
+	if is_instance_valid(_tiempo_hud):
 		var segundos := floori(_director.tiempo_transcurrido)
-		_puntaje.text = "%06d  ·  %02d:%02d" % [_director.puntaje, floori(float(segundos) / 60.0), segundos % 60]
+		_tiempo_hud.text = "TIEMPO  %02d:%02d" % [floori(float(segundos) / 60.0), segundos % 60]
 	if is_instance_valid(_amenazas):
 		var enemigos_activos := get_tree().get_nodes_in_group("enemigos").size()
 		_amenazas.text = "ACTIVOS %02d · POR LLEGAR %02d" % [
@@ -644,12 +675,20 @@ func _actualizar_hud() -> void:
 			_enemigos_restantes
 		]
 	if is_instance_valid(_integridad) and is_instance_valid(_jugador):
-		_integridad.value = _jugador.get("integridad")
+		var actual := float(_jugador.get("integridad"))
+		var maxima := float(_jugador.get("integridad_maxima"))
+		_integridad.max_value = maxima
+		_integridad.value = actual
+		if is_instance_valid(_texto_integridad):
+			_texto_integridad.text = "VITALIDAD  %03d / %03d" % [roundi(actual), roundi(maxima)]
 
 
 func _actualizar_integridad(actual: float) -> void:
 	if is_instance_valid(_integridad):
 		_integridad.value = actual
+	if is_instance_valid(_texto_integridad) and is_instance_valid(_jugador):
+		var maxima := float(_jugador.get("integridad_maxima"))
+		_texto_integridad.text = "VITALIDAD  %03d / %03d" % [roundi(actual), roundi(maxima)]
 
 
 func _actualizar_vidas(actuales: int) -> void:

@@ -116,7 +116,14 @@ layout_mode = 2
 
 [node name="Contenido" type="VBoxContainer" parent="Overlay/Centro/Panel"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
+
+[node name="Sello" type="Label" parent="Overlay/Centro/Panel/Contenido"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.52, 0.37, 1)
+theme_override_font_sizes/font_size = 12
+text = "DESCENSO A LA ARENA"
+horizontal_alignment = 1
 
 [node name="Titulo" type="Label" parent="Overlay/Centro/Panel/Contenido"]
 layout_mode = 2
@@ -126,7 +133,7 @@ text = "EL INQUIETO"
 horizontal_alignment = 1
 
 [node name="Detalle" type="Label" parent="Overlay/Centro/Panel/Contenido"]
-custom_minimum_size = Vector2(0, 116)
+custom_minimum_size = Vector2(0, 148)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.88, 0.79, 0.69, 1)
 theme_override_font_sizes/font_size = 17

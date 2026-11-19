@@ -48,7 +48,8 @@ func _physics_process(delta: float) -> void:
 	if distancia > 34.0:
 		var direccion := (_jugador.global_position - global_position).normalized()
 		velocity = direccion * velocidad
-		_fila = (roundi(direccion.angle() / (TAU / 8.0)) + 8) % 8
+		# El spritesheet empieza mirando en sentido opuesto al ángulo de movimiento.
+		_fila = (roundi(direccion.angle() / (TAU / 8.0)) + 12) % 8
 		_tiempo_animacion += delta
 		if _tiempo_animacion >= 0.14:
 			_tiempo_animacion = 0.0

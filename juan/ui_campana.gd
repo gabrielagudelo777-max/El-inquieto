@@ -79,6 +79,8 @@ func _conectar_director() -> void:
 
 func _actualizar_estado(nuevo: int) -> void:
 	estado_actual = nuevo
+	$Overlay/Centro/Panel.custom_minimum_size.x = 620.0
+	lbl_detalle.custom_minimum_size.y = 148.0
 	if is_instance_valid(_contenedor_recompensas):
 		_contenedor_recompensas.hide()
 	if nuevo == DirectorCampana.Estado.COMBATE or nuevo == DirectorCampana.Estado.MENU:
@@ -143,11 +145,11 @@ func _overlay_actualizar(mostrar: bool) -> void:
 
 
 func _crear_contenedor_recompensas() -> void:
-	_contenedor_recompensas = HBoxContainer.new()
+	_contenedor_recompensas = VBoxContainer.new()
 	_contenedor_recompensas.name = "OpcionesMejora"
-	_contenedor_recompensas.custom_minimum_size = Vector2(0.0, 156.0)
+	_contenedor_recompensas.custom_minimum_size = Vector2(0.0, 270.0)
 	_contenedor_recompensas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_contenedor_recompensas.add_theme_constant_override("separation", 10)
+	_contenedor_recompensas.add_theme_constant_override("separation", 8)
 	_contenedor_recompensas.hide()
 
 	var contenido := $Overlay/Centro/Panel/Contenido as VBoxContainer
@@ -169,67 +171,97 @@ func _mostrar_recompensas(opciones: Array[MejoraConfig]) -> void:
 
 	_recompensa_elegida = false
 	_limpiar_tarjetas_recompensa()
+	$Overlay/Centro/Panel.custom_minimum_size.x = 850.0
+	lbl_detalle.custom_minimum_size.y = 42.0
 	lbl_titulo.text = "ELIGE UNA MEJORA"
-	lbl_detalle.text = "La mejora elegida estará activa durante el siguiente combate."
+	lbl_detalle.text = "EL FAVOR ELEGIDO TE ACOMPAÑARÁ EN EL SIGUIENTE COMBATE"
 	btn_principal.hide()
 	btn_menu.hide()
 
-	for mejora in _opciones_recompensa:
-		_contenedor_recompensas.add_child(_crear_tarjeta_recompensa(mejora))
+	for indice in _opciones_recompensa.size():
+		_contenedor_recompensas.add_child(
+			_crear_tarjeta_recompensa(_opciones_recompensa[indice], indice)
+		)
 
 	_contenedor_recompensas.show()
+	if _contenedor_recompensas.get_child_count() > 0:
+		(_contenedor_recompensas.get_child(0) as Button).grab_focus()
 
 
-func _crear_tarjeta_recompensa(mejora: MejoraConfig) -> Button:
+func _crear_tarjeta_recompensa(mejora: MejoraConfig, indice: int) -> Button:
 	var boton := Button.new()
 	boton.name = "Mejora_" + String(mejora.id)
-	boton.custom_minimum_size = Vector2(175.0, 156.0)
+	boton.custom_minimum_size = Vector2(0.0, 82.0)
 	boton.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boton.focus_mode = Control.FOCUS_ALL
+	boton.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 	var estilo := StyleBoxFlat.new()
-	estilo.bg_color = Color(0.10, 0.045, 0.04, 0.94)
-	estilo.border_color = Color(0.48, 0.27, 0.14, 1.0)
+	estilo.bg_color = Color(0.045, 0.032, 0.03, 0.96)
+	estilo.border_color = Color(0.38, 0.27, 0.18, 0.9)
 	estilo.set_border_width_all(1)
-	estilo.set_border_width(SIDE_BOTTOM, 3)
+	estilo.set_content_margin_all(10)
 	boton.add_theme_stylebox_override("normal", estilo)
 
 	var encima := estilo.duplicate() as StyleBoxFlat
-	encima.bg_color = Color(0.22, 0.075, 0.045, 0.98)
+	encima.bg_color = Color(0.13, 0.075, 0.045, 0.99)
+	encima.border_color = Color(0.91, 0.69, 0.34, 1.0)
+	encima.set_border_width_all(2)
 	boton.add_theme_stylebox_override("hover", encima)
 	boton.add_theme_stylebox_override("pressed", encima)
+	boton.add_theme_stylebox_override("focus", encima)
 
-	var margen := MarginContainer.new()
-	margen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margen.add_theme_constant_override("margin_left", 10)
-	margen.add_theme_constant_override("margin_top", 8)
-	margen.add_theme_constant_override("margin_right", 10)
-	margen.add_theme_constant_override("margin_bottom", 8)
-	margen.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	boton.add_child(margen)
+	var fila := HBoxContainer.new()
+	fila.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fila.add_theme_constant_override("separation", 16)
+	fila.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	boton.add_child(fila)
+
+	var emblema := Panel.new()
+	emblema.custom_minimum_size = Vector2(56.0, 56.0)
+	var estilo_emblema := StyleBoxFlat.new()
+	estilo_emblema.bg_color = Color(0.075, 0.045, 0.04, 1.0)
+	estilo_emblema.border_color = Color(0.67, 0.48, 0.25, 0.9)
+	estilo_emblema.set_border_width_all(1)
+	estilo_emblema.set_corner_radius_all(2)
+	emblema.add_theme_stylebox_override("panel", estilo_emblema)
+	emblema.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fila.add_child(emblema)
+
+	var numero := Label.new()
+	numero.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	numero.text = ["I", "II", "III"][mini(indice, 2)]
+	numero.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	numero.add_theme_font_override("font", FUENTE_UI)
+	numero.add_theme_font_size_override("font_size", 22)
+	numero.add_theme_color_override("font_color", Color(0.91, 0.73, 0.43))
+	numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	emblema.add_child(numero)
 
 	var contenido := VBoxContainer.new()
-	contenido.add_theme_constant_override("separation", 8)
+	contenido.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	contenido.add_theme_constant_override("separation", 4)
 	contenido.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margen.add_child(contenido)
+	fila.add_child(contenido)
 
 	var titulo := Label.new()
 	titulo.text = mejora.nombre
-	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	titulo.add_theme_font_override("font", FUENTE_UI)
 	titulo.add_theme_color_override("font_color", Color(0.93, 0.83, 0.61))
-	titulo.add_theme_font_size_override("font_size", 16)
+	titulo.add_theme_font_size_override("font_size", 17)
 	titulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	contenido.add_child(titulo)
 
 	var descripcion := Label.new()
 	descripcion.text = mejora.descripcion
 	descripcion.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	descripcion.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	descripcion.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	descripcion.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	descripcion.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	descripcion.add_theme_color_override("font_color", Color(0.88, 0.79, 0.69))
-	descripcion.add_theme_font_size_override("font_size", 13)
+	descripcion.add_theme_font_size_override("font_size", 14)
 	descripcion.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	contenido.add_child(descripcion)
 

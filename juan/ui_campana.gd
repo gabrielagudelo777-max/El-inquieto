@@ -28,7 +28,7 @@ const FUENTE_UI = preload("res://assets/fonts/CinzelDecorative-Regular.ttf")
 var director: DirectorCampana
 var estado_actual: int = DirectorCampana.Estado.MENU
 var mostrar_hud := true
-var _contenedor_recompensas: HBoxContainer
+var _contenedor_recompensas: VBoxContainer
 var _opciones_recompensa: Array[MejoraConfig] = []
 var _recompensa_elegida := false
 

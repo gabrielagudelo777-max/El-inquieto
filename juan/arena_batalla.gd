@@ -10,6 +10,7 @@ const EMBLEMA_ALIEN_SECUNDARIO = "res://assets/naves_larzes/Enemy_4_B_Medium.png
 const TIPOGRAFIA = "res://assets/fonts/CinzelDecorative-Regular.ttf"
 const SCRIPT_JUGADOR = preload("res://juan/jugador_batalla.gd")
 const SCRIPT_ALIEN = preload("res://juan/enemigo_batalla.gd")
+const SCRIPT_ALIEN_RANGO = preload("res://juan/enemigo_rango_3d.gd")
 const SCRIPT_DIRECTOR = preload("res://juan/director_campana.gd")
 const ESCENA_UI_CAMPANA = preload("res://juan/ui_campana.tscn")
 const RUTAS_OLEADAS := [
@@ -430,7 +431,7 @@ func _aparecer_enemigo() -> void:
 	var carril := (numero - 1) % 5
 	var carriles_x := [-7.0, -3.5, 0.0, 3.5, 7.0]
 	alien.position = Vector3(carriles_x[carril], 0.0, -7.2 - float((numero - 1) / 5) * 1.2)
-	alien.set_script(SCRIPT_ALIEN)
+	alien.set_script(SCRIPT_ALIEN_RANGO if _director.indice_oleada == 1 else SCRIPT_ALIEN)
 	alien.call("configurar_oleada", _configuracion_oleada.rapidez_formacion, _configuracion_oleada.intervalo_disparo, _configuracion_oleada.puntos_por_enemigo, _configuracion_oleada.es_jefe)
 	var colision := CollisionShape3D.new()
 	var capsula := CapsuleShape3D.new()

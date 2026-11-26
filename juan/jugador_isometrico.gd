@@ -4,6 +4,9 @@ signal integridad_cambiada(actual: float)
 signal murio
 
 const PROYECTIL = preload("res://juan/proyectil_isometrico.tscn")
+const TAMANO_CELDA := 256
+const CUADROS_CAMINATA := 4
+const INTERVALO_ANIMACION := 0.14
 
 @export var velocidad := 280.0
 @export var velocidad_correr := 390.0
@@ -26,6 +29,9 @@ var _tiempo_esquive := 0.0
 var _enfriamiento_disparo := 0.0
 var _tiempo_dano := 0.0
 var _tiempo_invulnerabilidad := 0.0
+var _tiempo_animacion := 0.0
+var _cuadro := 0
+var _fila := 0
 var _muerto := false
 var _velocidad_base := 0.0
 var _velocidad_correr_base := 0.0
@@ -112,7 +118,8 @@ func _physics_process(delta: float) -> void:
 	if fuera_del_diamante > 1.0:
 		position /= fuera_del_diamante
 
-	_actualizar_sprite(movimiento)
+	var direccion_animacion := velocity.normalized() if velocity.length_squared() > 0.0 else Vector2.ZERO
+	_actualizar_sprite(direccion_animacion, delta)
 
 	if Input.is_action_pressed("disparar") and _enfriamiento_disparo <= 0.0:
 		_disparar()
@@ -214,7 +221,33 @@ func _disparar() -> void:
 	_direccion_mirada = direccion
 
 
-func _actualizar_sprite(_movimiento: Vector2) -> void:
+func _actualizar_sprite(movimiento: Vector2, delta: float) -> void:
+	# La hoja, igual que las de los enemigos, organiza las 8 direcciones
+	# por filas y los 4 cuadros de caminar por columnas.
+	if movimiento.length_squared() > 0.0:
+		_direccion_mirada = movimiento.normalized()
+		_fila = (roundi(_direccion_mirada.angle() / (TAU / 8.0)) + 12) % 8
+		_tiempo_animacion += delta
+		var intervalo := INTERVALO_ANIMACION
+		if _tiempo_esquive > 0.0:
+			intervalo = 0.07
+		elif velocity.length() > velocidad:
+			intervalo = 0.11
+		if _tiempo_animacion >= intervalo:
+			_tiempo_animacion = 0.0
+			_cuadro = (_cuadro + 1) % CUADROS_CAMINATA
+	else:
+		_fila = (roundi(_direccion_mirada.angle() / (TAU / 8.0)) + 12) % 8
+		_cuadro = 0
+		_tiempo_animacion = 0.0
+
+	_sprite.region_rect = Rect2(
+		_cuadro * TAMANO_CELDA,
+		_fila * TAMANO_CELDA,
+		TAMANO_CELDA,
+		TAMANO_CELDA
+	)
+
 	var opacidad := 1.0
 	if _tiempo_invulnerabilidad > 0.0:
 		var fase_parpadeo := int(_tiempo_invulnerabilidad / 0.08)

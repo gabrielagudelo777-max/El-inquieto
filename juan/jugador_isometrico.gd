@@ -86,7 +86,6 @@ func _physics_process(delta: float) -> void:
 
 	if movimiento.length_squared() > 0.0:
 		_direccion_mirada = movimiento
-		_fila = _fila_para_direccion(movimiento)
 
 	if (
 		Input.is_action_just_pressed("dash")

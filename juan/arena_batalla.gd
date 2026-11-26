@@ -1,6 +1,5 @@
 extends Node3D
 
-const ASTRONAUTA = "res://assets/quaternius_ultimate_space/Astronaut.glb"
 const ALIEN = "res://assets/quaternius_modular_scifi/glTF/Aliens/Alien_Scolitex.gltf"
 const NEBULOSA = "res://assets/kenney_skyboxes_space/Skyboxes/skybox-space-nebula.png"
 const EMBLEMA_NAVE = "res://assets/naves_larzes/Ship_1_A_Medium.png"
@@ -8,7 +7,7 @@ const EMBLEMA_JEFE = "res://assets/naves_larzes/Boss_1_A_Medium.png"
 const EMBLEMA_ALIEN = "res://assets/naves_larzes/Enemy_1_A_Medium.png"
 const EMBLEMA_ALIEN_SECUNDARIO = "res://assets/naves_larzes/Enemy_4_B_Medium.png"
 const TIPOGRAFIA = "res://assets/fonts/CinzelDecorative-Regular.ttf"
-const SCRIPT_JUGADOR = preload("res://juan/jugador_batalla.gd")
+const ESCENA_JUGADOR = preload("res://juan/jugador_batalla.tscn")
 const SCRIPT_ALIEN = preload("res://juan/enemigo_batalla.gd")
 const SCRIPT_ALIEN_RANGO = preload("res://juan/enemigo_rango_3d.gd")
 const SCRIPT_DIRECTOR = preload("res://juan/director_campana.gd")
@@ -366,25 +365,9 @@ func _crear_cilindro(parent: Node3D, nombre: String, posicion: Vector3, radio_su
 
 
 func _crear_jugador() -> void:
-	_jugador = CharacterBody3D.new()
-	_jugador.name = "Astronauta"
+	_jugador = ESCENA_JUGADOR.instantiate() as CharacterBody3D
+	_jugador.name = "Caballero"
 	_jugador.position = Vector3(0.0, 0.0, 6.25)
-	_jugador.set_script(SCRIPT_JUGADOR)
-	var colision := CollisionShape3D.new()
-	var capsula := CapsuleShape3D.new()
-	capsula.radius = 0.38
-	capsula.height = 1.7
-	colision.shape = capsula
-	colision.position.y = 0.85
-	_jugador.add_child(colision)
-	var escena_astronauta := load(ASTRONAUTA) as PackedScene
-	if escena_astronauta:
-		var modelo := escena_astronauta.instantiate()
-		modelo.name = "ModeloAstronauta"
-		_jugador.add_child(modelo)
-		var animacion := modelo.find_child("AnimationPlayer", true, false) as AnimationPlayer
-		if animacion and animacion.has_animation("CharacterArmature|Idle_Gun"):
-			animacion.play("CharacterArmature|Idle_Gun")
 	add_child(_jugador)
 
 

@@ -2,6 +2,8 @@ extends CharacterBody3D
 
 const PROYECTIL := preload("res://juan/proyectil_batalla.tscn")
 
+@onready var _animacion: AnimationPlayer = find_child("AnimationPlayer", true, false) as AnimationPlayer
+
 @export var velocidad_movimiento := 5.2
 @export var velocidad_dash := 13.5
 @export var limite_arena := 8.65
@@ -12,10 +14,15 @@ var _tiempo_dash := 0.0
 var _enfriamiento_disparo := 0.0
 var _invulnerabilidad := 0.0
 var _director: DirectorCampana
+var _tiempo_dano := 0.0
+var _tiempo_ataque := 0.0
+var _animacion_actual := ""
 
 
 func _ready() -> void:
 	add_to_group("jugador")
+	_configurar_animaciones()
+	_reproducir_animacion("Idle")
 	call_deferred("_conectar_director")
 
 
@@ -26,6 +33,8 @@ func _physics_process(delta: float) -> void:
 	_enfriamiento_disparo = maxf(0.0, _enfriamiento_disparo - delta)
 	_tiempo_dash = maxf(0.0, _tiempo_dash - delta)
 	_invulnerabilidad = maxf(0.0, _invulnerabilidad - delta)
+	_tiempo_dano = maxf(0.0, _tiempo_dano - delta)
+	_tiempo_ataque = maxf(0.0, _tiempo_ataque - delta)
 	var entrada := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direccion := Vector3(entrada.x, 0.0, entrada.y).normalized()
 	if Input.is_action_just_pressed("dash") and direccion.length_squared() > 0.0 and _tiempo_dash <= 0.0:
@@ -42,6 +51,7 @@ func _physics_process(delta: float) -> void:
 	posicion.x = clampf(posicion.x, -limite_arena, limite_arena)
 	posicion.z = clampf(posicion.z, -limite_arena, limite_arena)
 	global_position = posicion
+	_actualizar_animacion(direccion)
 	if Input.is_action_pressed("disparar") and _enfriamiento_disparo <= 0.0:
 		_disparar()
 		_enfriamiento_disparo = 0.28
@@ -52,6 +62,7 @@ func recibir_dano(cantidad: float) -> void:
 		return
 	integridad = maxf(0.0, integridad - cantidad)
 	_invulnerabilidad = 0.55
+	_tiempo_dano = 0.58
 	if integridad <= 0.0:
 		if _director == null:
 			_conectar_director()
@@ -59,6 +70,8 @@ func recibir_dano(cantidad: float) -> void:
 			_director.recibir_impacto()
 			if _director.vidas > 0:
 				integridad = 100.0
+		if integridad <= 0.0:
+			_reproducir_animacion("Death")
 
 
 func _conectar_director() -> void:
@@ -79,6 +92,51 @@ func _disparar() -> void:
 	get_tree().current_scene.add_child(proyectil)
 	proyectil.global_position = global_position + Vector3.UP * 0.82 + direccion * 0.65
 	proyectil.configurar_direccion(direccion)
+	if _animacion == null or _animacion_actual != "Sword_Shield_Slash_Down" or not _animacion.is_playing():
+		_tiempo_ataque = 1.33
+
+
+func _actualizar_animacion(direccion: Vector3) -> void:
+	if _tiempo_dano > 0.0:
+		_reproducir_animacion("Take_Damage")
+	elif _tiempo_ataque > 0.0:
+		_reproducir_animacion("Sword_Shield_Slash_Down")
+	elif _tiempo_dash > 0.0:
+		_reproducir_animacion(_animacion_direccional(_direccion_dash, "Run_"))
+	elif direccion.length_squared() > 0.0:
+		var prefijo := "Run_" if Input.is_action_pressed("correr") else "Walk_"
+		_reproducir_animacion(_animacion_direccional(direccion, prefijo))
+	else:
+		_reproducir_animacion("Idle")
+
+
+func _animacion_direccional(direccion: Vector3, prefijo: String) -> String:
+	var direccion_local := global_transform.basis.inverse() * direccion
+	var angulo := atan2(direccion_local.x, -direccion_local.z)
+	var indice := posmod(roundi(angulo / (TAU / 8.0)), 8)
+	var orientaciones := [
+		"Forward", "Forward_Right", "Right", "Backward_Right",
+		"Backward", "Backward_Left", "Left", "Forward_Left"
+	]
+	return prefijo + orientaciones[indice]
+
+
+func _configurar_animaciones() -> void:
+	if _animacion == null:
+		push_error("JugadorBatalla: no se encontró el AnimationPlayer del caballero.")
+		return
+	for nombre in _animacion.get_animation_list():
+		if nombre == "Idle" or nombre.begins_with("Walk_") or nombre.begins_with("Run_"):
+			_animacion.get_animation(nombre).loop_mode = Animation.LOOP_LINEAR
+
+
+func _reproducir_animacion(nombre: String) -> void:
+	if _animacion == null or not _animacion.has_animation(nombre):
+		return
+	if _animacion_actual == nombre and _animacion.is_playing():
+		return
+	_animacion_actual = nombre
+	_animacion.play(nombre)
 
 
 func _buscar_objetivo() -> Node3D:

@@ -1,20 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://ddc0gm5t70gpe"]
 
-[ext_resource type="Script" path="res://juan/jugador_isometrico.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/personajes_nuevos/jugador_armadura.png" id="2_sprite"]
+[ext_resource type="Script" uid="uid://dqdd8bvxtpo3l" path="res://juan/jugador_isometrico.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://le1efctrs2j0" path="res://assets/personajes_nuevos/jugador_armadura.png" id="2_sprite"]
 
-[node name="JugadorIsometrico" type="CharacterBody2D"]
-collision_layer = 1
-collision_mask = 1
+[node name="JugadorIsometrico" type="CharacterBody2D" unique_id=859910918]
 script = ExtResource("1_script")
 
-[node name="Colision" type="CollisionPolygon2D" parent="."]
+[node name="Colision" type="CollisionPolygon2D" parent="." unique_id=1180626802]
 polygon = PackedVector2Array(-24, 0, 0, -13, 24, 0, 0, 13)
 
-[node name="SpriteCaballero" type="Sprite2D" parent="."]
-texture = ExtResource("2_sprite")
-position = Vector2(0, -48)
-scale = Vector2(0.82, 0.82)
+[node name="SpriteCaballero" type="Sprite2D" parent="." unique_id=1753747918]
 texture_filter = 1
+position = Vector2(-11, -58)
+scale = Vector2(0.82, 0.82)
+texture = ExtResource("2_sprite")
 region_enabled = true
 region_rect = Rect2(0, 512, 256, 256)

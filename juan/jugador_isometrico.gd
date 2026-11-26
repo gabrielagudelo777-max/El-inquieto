@@ -19,14 +19,11 @@ const PROYECTIL = preload("res://juan/proyectil_isometrico.tscn")
 var integridad := 100.0
 var _director: DirectorCampana
 @onready var _sprite: Sprite2D = $SpriteCaballero
-var _animacion: AnimationPlayer
-var _animacion_actual := ""
 var _direccion_esquive := Vector2.ZERO
 var _direccion_mirada := Vector2.RIGHT
 var _enfriamiento_esquive := 0.0
 var _tiempo_esquive := 0.0
 var _enfriamiento_disparo := 0.0
-var _tiempo_ataque := 0.0
 var _tiempo_dano := 0.0
 var _tiempo_invulnerabilidad := 0.0
 var _muerto := false
@@ -46,9 +43,6 @@ func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 1
 	integridad = integridad_maxima
-	_animacion = find_child("AnimationPlayer", true, false) as AnimationPlayer
-	_configurar_animaciones()
-	_actualizar_sprite(Vector2.ZERO)
 
 	call_deferred("_conectar_director")
 
@@ -68,7 +62,6 @@ func _physics_process(delta: float) -> void:
 	_enfriamiento_esquive = maxf(_enfriamiento_esquive - delta, 0.0)
 	_enfriamiento_disparo = maxf(_enfriamiento_disparo - delta, 0.0)
 	_tiempo_esquive = maxf(_tiempo_esquive - delta, 0.0)
-	_tiempo_ataque = maxf(_tiempo_ataque - delta, 0.0)
 	_tiempo_dano = maxf(_tiempo_dano - delta, 0.0)
 	_tiempo_invulnerabilidad = maxf(_tiempo_invulnerabilidad - delta, 0.0)
 	var corriendo := Input.is_action_pressed("correr")
@@ -179,7 +172,6 @@ func recibir_dano(cantidad: float) -> void:
 	if integridad <= 0.0:
 		_muerto = true
 		velocity = Vector2.ZERO
-		_reproducir_animacion("Death")
 		murio.emit()
 
 
@@ -201,8 +193,6 @@ func reaparecer() -> void:
 	_tiempo_dano = 0.0
 	_tiempo_invulnerabilidad = duracion_invulnerabilidad
 	_sprite.modulate = Color.WHITE
-	_animacion_actual = ""
-	_actualizar_sprite(Vector2.ZERO)
 	integridad_cambiada.emit(integridad)
 
 
@@ -221,36 +211,10 @@ func _disparar() -> void:
 	contenedor.add_child(proyectil)
 	proyectil.global_position = global_position + direccion * 24.0 + Vector2(0, -20)
 	proyectil.call("configurar", direccion, dano_proyectil)
-
-	if (
-		_animacion == null
-		or _animacion_actual != "Sword_Shield_Slash_Down"
-		or not _animacion.is_playing()
-	):
-		_tiempo_ataque = 1.33
 	_direccion_mirada = direccion
 
 
-func _actualizar_sprite(movimiento: Vector2) -> void:
-	var nombre_animacion := "Idle"
-	var direccion_animacion := movimiento
-	if _tiempo_esquive > 0.0 and not _direccion_esquive.is_zero_approx():
-		direccion_animacion = _direccion_esquive
-	if _tiempo_dano > 0.0:
-		nombre_animacion = "Take_Damage"
-	elif _tiempo_ataque > 0.0:
-		nombre_animacion = "Sword_Shield_Slash_Down"
-	elif direccion_animacion.length_squared() > 0.0:
-		var corriendo := Input.is_action_pressed("correr") or _tiempo_esquive > 0.0
-		var direcciones := [
-			"Right", "Backward_Right", "Backward", "Backward_Left",
-			"Left", "Forward_Left", "Forward", "Forward_Right"
-		]
-		var indice := posmod(roundi(direccion_animacion.angle() / (TAU / 8.0)), 8)
-		nombre_animacion = ("Run_" if corriendo else "Walk_") + direcciones[indice]
-
-	_reproducir_animacion(nombre_animacion)
-
+func _actualizar_sprite(_movimiento: Vector2) -> void:
 	var opacidad := 1.0
 	if _tiempo_invulnerabilidad > 0.0:
 		var fase_parpadeo := int(_tiempo_invulnerabilidad / 0.08)
@@ -260,26 +224,6 @@ func _actualizar_sprite(movimiento: Vector2) -> void:
 	var color := Color(1.0, 0.48, 0.42) if _tiempo_dano > 0.0 else Color.WHITE
 	color.a = opacidad
 	_sprite.modulate = color
-
-
-func _configurar_animaciones() -> void:
-	if _animacion == null:
-		push_error("JugadorIsometrico: no se encontró el AnimationPlayer del caballero.")
-		return
-
-	for nombre in _animacion.get_animation_list():
-		if nombre == "Idle" or nombre.begins_with("Walk_") or nombre.begins_with("Run_"):
-			var clip := _animacion.get_animation(nombre)
-			clip.loop_mode = Animation.LOOP_LINEAR
-
-
-func _reproducir_animacion(nombre: String) -> void:
-	if _animacion == null or not _animacion.has_animation(nombre):
-		return
-	if _animacion_actual == nombre and _animacion.is_playing():
-		return
-	_animacion_actual = nombre
-	_animacion.play(nombre)
 
 
 func _buscar_objetivo() -> Node2D:

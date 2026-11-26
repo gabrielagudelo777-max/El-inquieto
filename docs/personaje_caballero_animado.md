@@ -1,17 +1,7 @@
 # Personaje del jugador
 
-El jugador ahora se instancia desde `juan/jugador_isometrico.tscn`. La escena conserva el cuerpo y la colisión 2D que usa la arena, y muestra el modelo 3D dentro de un `SubViewport` transparente. Así el caballero puede usar sus animaciones sin cambiar el movimiento ni las colisiones de la campaña.
+La escena activa del jugador vuelve a usar la hoja original `assets/personajes_nuevos/jugador_armadura.png`. `juan/jugador_isometrico.tscn` reúne el cuerpo 2D, su colisión y el sprite. El script conserva movimiento, dash, disparo, vida e invulnerabilidad.
 
-## Animaciones conectadas
+La hoja tiene cuadros de 256 × 256 organizados en ocho filas. Esta etapa muestra un cuadro fijo de la fila de orientación inicial; la siguiente etapa conectará los cuadros a animaciones y a las ocho direcciones para que el personaje pueda verse de frente, de espalda y de lado.
 
-- Quieto: `Idle`.
-- Movimiento: `Walk_*`.
-- Carrera y esquive: `Run_*`.
-- Disparo: `Sword_Shield_Slash_Down`.
-- Daño y derrota: `Take_Damage` y `Death`.
-
-La dirección de movimiento selecciona los clips de ocho direcciones incluidos en el modelo.
-
-## Recurso y licencia
-
-El modelo `assets/personajes_nuevos/caballero_retro/CaballeroRetro.glb` proviene de [N64/PS1 Animated Heroes](https://swickster.itch.io/n64ps1-animated-heroes), demo gratuita del autor swickster. La demo incluye caballero y goblin en GLB y FBX. Su archivo `Usage_Rights.txt` permite integrar y modificar los recursos en juegos y proyectos terminados; prohíbe redistribuirlos como archivos independientes. Se conserva ese archivo junto al modelo.
+El modelo 3D del caballero y sus commits se conservan en el historial y en `assets/personajes_nuevos/caballero_retro/`, pero ya no se usan en la escena activa de la versión compartida.

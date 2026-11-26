@@ -21,7 +21,7 @@ const PILAR_MEDIO_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/
 const RESTOS_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Objects/Remains/Remains 1.png")
 const GRIETA_ROJA = preload("res://assets/arena_isometrica/grietas/Dark Fantasy Isometric Tiles (CC-BY 4.0 - Of Far Different Nature)/OFDN Isometric Tile 09.png")
 const ALTAR_TINTA = preload("res://assets/arena_isometrica/tinta/Tile Set/Altar/Altar 1.png")
-const SCRIPT_JUGADOR = preload("res://juan/jugador_isometrico.gd")
+const ESCENA_JUGADOR = preload("res://juan/jugador_isometrico.tscn")
 const SCRIPT_ENEMIGO = preload("res://juan/enemigo_isometrico.gd")
 const SCRIPT_DIRECTOR = preload("res://juan/director_campana.gd")
 const UI_CAMPANA = preload("res://juan/ui_campana.tscn")
@@ -383,9 +383,8 @@ func _crear_brasero(posicion: Vector2, color_fuego: Color) -> void:
 
 
 func _crear_jugador() -> void:
-	_jugador = CharacterBody2D.new()
+	_jugador = ESCENA_JUGADOR.instantiate() as CharacterBody2D
 	_jugador.name = "VigiaCarmesi"
-	_jugador.set_script(SCRIPT_JUGADOR)
 	_jugador.position = Vector2(0, 210)
 	_jugador.connect("integridad_cambiada", Callable(self, "_actualizar_integridad"))
 	_entidades.add_child(_jugador)

@@ -35,10 +35,13 @@ const OLEADAS := [
 	"res://juan/oleadas/oleada_06_jefe.tres",
 ]
 const SALAS := ["ATRIO DE LAS CENIZAS", "GALERÍA CARMESÍ", "FOSO DEL ECLIPSE", "SANTUARIO DE BRASA", "PASAJE DE LOS ECOS", "SALA DEL VIGÍA"]
+const RADIO_SALA := 16
+const SEGUIMIENTO_CAMARA := 8.0
 
 var _suelo: TileMapLayer
 var _entidades: Node2D
 var _jugador: CharacterBody2D
+var _camara: Camera2D
 var _director: DirectorCampana
 var _configuracion: OleadaConfig
 var _mejora_aplicada := false
@@ -64,6 +67,7 @@ func _ready() -> void:
 	_crear_entorno()
 	_crear_murossala()
 	_crear_ruinas()
+	_crear_obstaculos()
 	_crear_nucleo()
 	_crear_portal()
 	_crear_pilares_y_braseros()
@@ -75,6 +79,13 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if is_instance_valid(_camara) and is_instance_valid(_jugador):
+		var suavidad := 1.0 - exp(-SEGUIMIENTO_CAMARA * delta)
+		_camara.global_position = _camara.global_position.lerp(
+			_jugador.global_position,
+			suavidad
+		)
+
 	if is_instance_valid(_luz_nucleo):
 		_luz_nucleo.energy = 2.5 + sin(Time.get_ticks_msec() / 1000.0 * 1.6) * 0.2
 	if is_instance_valid(_aro_nucleo):
@@ -90,7 +101,7 @@ func _process(delta: float) -> void:
 
 func _crear_ambiente() -> void:
 	var fondo := Polygon2D.new()
-	fondo.polygon = PackedVector2Array([Vector2(-1800, -1000), Vector2(1800, -1000), Vector2(1800, 1000), Vector2(-1800, 1000)])
+	fondo.polygon = PackedVector2Array([Vector2(-2300, -1200), Vector2(2300, -1200), Vector2(2300, 1200), Vector2(-2300, 1200)])
 	fondo.color = Color(0.055, 0.035, 0.065)
 	fondo.z_index = -20
 	add_child(fondo)
@@ -129,9 +140,9 @@ func _crear_suelo() -> void:
 
 
 func _pintar_sala() -> void:
-	for x in range(-10, 11):
-		for y in range(-10, 11):
-			if abs(x) + abs(y) > 10:
+	for x in range(-RADIO_SALA, RADIO_SALA + 1):
+		for y in range(-RADIO_SALA, RADIO_SALA + 1):
+			if abs(x) + abs(y) > RADIO_SALA:
 				continue
 			var mezcla := posmod(x * 31 + y * 17 + x * y * 7 + _indice_sala * 11, 100)
 			var variante := 0
@@ -257,11 +268,49 @@ func _crear_ruinas() -> void:
 	_entidades.add_child(restos)
 
 
+func _crear_obstaculos() -> void:
+	var posiciones: Array[Vector2] = [
+		Vector2(-600, -80),
+		Vector2(600, 80),
+		Vector2(-1000, -130),
+		Vector2(1000, 130),
+		Vector2(0, -500),
+		Vector2(0, 500),
+	]
+
+	for indice in posiciones.size():
+		var obstaculo := StaticBody2D.new()
+		obstaculo.name = "Escombro_%02d" % indice
+		obstaculo.position = posiciones[indice]
+		obstaculo.collision_layer = 1
+		obstaculo.collision_mask = 1
+		obstaculo.add_to_group("obstaculos")
+
+		var colision := CollisionPolygon2D.new()
+		colision.name = "ColisionBase"
+		colision.polygon = PackedVector2Array([
+			Vector2(-42, 0),
+			Vector2(0, -22),
+			Vector2(42, 0),
+			Vector2(0, 22),
+		])
+		obstaculo.add_child(colision)
+
+		var visual := Sprite2D.new()
+		visual.texture = RUINAS[indice % RUINAS.size()]
+		visual.position = Vector2(0, -24)
+		visual.scale = Vector2(0.30, 0.30)
+		visual.modulate = Color(0.82, 0.73, 0.63, 0.92)
+		visual.z_index = 1
+		obstaculo.add_child(visual)
+		_entidades.add_child(obstaculo)
+
+
 func _crear_murossala() -> void:
 	var contorno := _puntos_cerrados(PackedVector2Array([
-		Vector2(0, -635), Vector2(635, -318), Vector2(1270, 0),
-		Vector2(635, 318), Vector2(0, 635), Vector2(-635, 318),
-		Vector2(-1270, 0), Vector2(-635, -318)
+		Vector2(0, -1016), Vector2(1016, -508), Vector2(2032, 0),
+		Vector2(1016, 508), Vector2(0, 1016), Vector2(-1016, 508),
+		Vector2(-2032, 0), Vector2(-1016, -508)
 	]))
 	var muro := Line2D.new()
 	muro.name = "MuroPerimetral"
@@ -471,13 +520,13 @@ func _aparecer_enemigo() -> void:
 	var borde := randi_range(0, 3)
 	match borde:
 		0:
-			enemigo.position = Vector2(randf_range(-300, 300), -285)
+			enemigo.position = Vector2(randf_range(-350, 350), -700)
 		1:
-			enemigo.position = Vector2(randf_range(-300, 300), 285)
+			enemigo.position = Vector2(randf_range(-350, 350), 700)
 		2:
-			enemigo.position = Vector2(-500, randf_range(-250, 250))
+			enemigo.position = Vector2(-1450, randf_range(-140, 140))
 		_:
-			enemigo.position = Vector2(500, randf_range(-250, 250))
+			enemigo.position = Vector2(1450, randf_range(-140, 140))
 
 	if _configuracion.es_jefe:
 		enemigo.scale = Vector2(1.7, 1.7)
@@ -486,17 +535,17 @@ func _aparecer_enemigo() -> void:
 
 
 func _crear_camara() -> void:
-	var camara := Camera2D.new()
-	camara.name = "CamaraIsometrica"
-	camara.zoom = Vector2(0.70, 0.70)
-	camara.position_smoothing_enabled = true
-	camara.position_smoothing_speed = 4.0
-	camara.limit_left = -1280
-	camara.limit_right = 1280
-	camara.limit_top = -640
-	camara.limit_bottom = 640
-	camara.enabled = true
-	_jugador.add_child(camara)
+	_camara = Camera2D.new()
+	_camara.name = "CamaraIsometrica"
+	_camara.zoom = Vector2(0.75, 0.75)
+	_camara.position_smoothing_enabled = false
+	_camara.limit_left = -2048
+	_camara.limit_right = 2048
+	_camara.limit_top = -1024
+	_camara.limit_bottom = 1024
+	_camara.global_position = _jugador.global_position
+	add_child(_camara)
+	_camara.enabled = true
 
 
 func _crear_hud() -> void:
@@ -594,11 +643,11 @@ func _crear_esporas() -> void:
 		esporas.lifetime = 7.0
 		esporas.preprocess = 5.0
 		esporas.position = Vector2.ZERO
-		esporas.visibility_rect = Rect2(-1100, -520, 2200, 1040)
+		esporas.visibility_rect = Rect2(-2300, -1150, 4600, 2300)
 		esporas.texture = textura
 		var proceso := ParticleProcessMaterial.new()
 		proceso.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-		proceso.emission_box_extents = Vector3(1450, 700, 0)
+		proceso.emission_box_extents = Vector3(2300, 1150, 0)
 		proceso.direction = Vector3(0, -1, 0)
 		proceso.spread = 180.0
 		proceso.gravity = Vector3(0, -7, 0)

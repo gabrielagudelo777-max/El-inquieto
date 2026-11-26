@@ -111,10 +111,10 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	position.x = clampf(position.x, -840.0, 840.0)
-	position.y = clampf(position.y, -390.0, 390.0)
+	position.x = clampf(position.x, -1792.0, 1792.0)
+	position.y = clampf(position.y, -896.0, 896.0)
 
-	var fuera_del_diamante := absf(position.x) / 840.0 + absf(position.y) / 390.0
+	var fuera_del_diamante := absf(position.x) / 1792.0 + absf(position.y) / 896.0
 	if fuera_del_diamante > 1.0:
 		position /= fuera_del_diamante
 

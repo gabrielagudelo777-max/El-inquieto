@@ -16,16 +16,20 @@ Primero se completa una partida corta de seis oleadas y un jefe final. La campa�
 
 ## Balance inicial para probar
 
-| Oleada | Enemigos | Frecuencia de goblin de rango | Intervalo de aparición | Rapidez | Disparo de rango | Puntos | Intermisión |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 6 | 0 % | 0,90 s | 1,20 | — | 100 | 5 s |
-| 2 | 8 | 20 % | 0,80 s | 1,30 | 2,80 s | 100 | 5 s |
-| 3 | 10 | 30 % | 0,75 s | 1,40 | 2,60 s | 120 | 6 s |
-| 4 | 12 | 40 % | 0,70 s | 1,50 | 2,40 s | 120 | 6 s |
-| 5 | 14 | 50 % | 0,65 s | 1,60 | 2,20 s | 150 | 8 s |
-| 6 | Jefe (28 de vida) | Aparecen ambos refuerzos | — | 1,70 | Refuerzos: 3,20 s | 1000 | — |
+| Oleada | Enemigos | Goblin de rango | Goblin de área | Intervalo de aparición | Rapidez | Disparo de rango | Proyectil de rango | Puntos | Intermisión |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 6 | 0 % | 0 % | 0,90 s | 1,20 | — | — | 100 | 5 s |
+| 2 | 18 | 25 % | 0 % | 0,52 s | 1,90 | 2,40 s | 450 velocidad / 8 daño | 100 | 5 s |
+| 3 | 32 | 40 % | 0 % | 0,38 s | 2,30 | 1,90 s | 480 velocidad / 9 daño | 120 | 6 s |
+| 4 | 50 | 50 % | 0 % | 0,28 s | 2,80 | 1,50 s | 520 velocidad / 10 daño | 120 | 6 s |
+| 5 | 72 | 55 % | 15 % | 0,20 s | 3,20 | 1,25 s | 570 velocidad / 12 daño | 150 | 8 s |
+| 6 | Jefe (64 de vida) | Refuerzos cercanos y de rango | — | — | Jefe: 3,00 | Refuerzos: 1,70 s | 520 velocidad / 10 daño | 1000 | — |
 
-Son valores de partida, no de balance final. En las oleadas 1–5 sube gradualmente la cantidad, la rapidez y la proporción de enemigos de rango. El intervalo de disparo se aplica al goblin de rango y se acorta por oleada. Durante el jefe aparece una pareja inicial de goblins (uno cercano y uno de rango); después puede llegar otra pareja cada 10 s, hasta cuatro refuerzos activos. Los refuerzos no adelantan la derrota del jefe ni prolongan la oleada una vez derrotado. El jefe conserva por ahora su ataque de contacto; su ataque a distancia se agregará en una etapa posterior. La duración final dependerá del tiempo real de combate y se medirá en pruebas.
+Esta configuración aplica una subida deliberadamente brusca para que el desplazamiento y el dash sean centrales. Los porcentajes de enemigos alternativos se calculan al aparecer cada unidad: en la oleada 5 hay un 15 % de probabilidad de enemigo de área, un 55 % de rango y el resto son goblins cercanos. Los enemigos de área conservan su zona de aviso antes del golpe. La cadencia y velocidad de proyectil de los goblins de rango se ajustan por oleada.
+
+El jefe combina contacto y dos patrones de misil alternos. El misil teledirigido sigue al jugador con giro limitado, se mueve a 500 y causa 14 de daño al impactar. El misil de asalto se desplaza a 330 hacia la posición fijada al lanzarlo; al llegar, marca un radio de 170 durante 0,9 s y causa 23 de daño si el jugador sigue en la zona. El jefe alterna estos ataques cada 3,4 s mientras el jugador esté a su alcance. Aparece una pareja inicial de goblins (uno cercano y uno de rango); después llega otra pareja cada 7 s, hasta seis refuerzos activos. Los refuerzos no cuentan para completar la oleada del jefe.
+
+Estos son valores de dificultad alta para la siguiente revisión jugable, no un balance final. La duración y la dificultad efectiva dependen del tamaño real de la arena, el daño del jugador y el comportamiento del dash; se ajustarán después de jugar la versión integrada.
 
 ## Responsabilidad de Juan
 

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://juan/proyectil_misil_jefe.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_misil"]
+radius = 10.0
+
+[node name="MisilJefe" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="Colision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_misil")
+
+[node name="Cuerpo" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-7, 12, -5, -8, 0, -18, 5, -8, 7, 12, 0, 8)
+color = Color(1, 0.48, 0.08, 1)

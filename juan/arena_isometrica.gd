@@ -518,9 +518,15 @@ func _aparecer_enemigo(
 	if escena == null:
 		escena = _configuracion.escena_enemigo
 		es_jefe = _configuracion.es_jefe
+		var tirada := randf()
 		if (
+			_configuracion.escena_enemigo_terciario != null
+			and tirada < _configuracion.probabilidad_terciario
+		):
+			escena = _configuracion.escena_enemigo_terciario
+		elif (
 			_configuracion.escena_enemigo_alternativo != null
-			and randf() < _configuracion.probabilidad_alternativo
+			and tirada < _configuracion.probabilidad_terciario + _configuracion.probabilidad_alternativo
 		):
 			escena = _configuracion.escena_enemigo_alternativo
 
@@ -548,7 +554,9 @@ func _aparecer_enemigo(
 		es_jefe,
 		contar_para_oleada,
 		_configuracion.integridad_jefe,
-		_configuracion.intervalo_disparo_refuerzos_jefe if es_refuerzo else _configuracion.intervalo_disparo
+		_configuracion.intervalo_disparo_refuerzos_jefe if es_refuerzo else _configuracion.intervalo_disparo,
+		_configuracion.velocidad_proyectil_refuerzos_jefe if es_refuerzo else _configuracion.velocidad_proyectil_rango,
+		_configuracion.dano_proyectil_refuerzos_jefe if es_refuerzo else _configuracion.dano_proyectil_rango
 	)
 
 	var borde := randi_range(0, 3)

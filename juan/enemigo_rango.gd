@@ -16,6 +16,12 @@ func _configurar_intervalo_disparo(intervalo: float) -> void:
 	intervalo_disparo_rango = maxf(intervalo, 0.2)
 
 
+func _configurar_disparo_rango(intervalo: float, velocidad: float, dano: float) -> void:
+	intervalo_disparo_rango = maxf(intervalo, 0.2)
+	velocidad_proyectil_rango = maxf(velocidad, 100.0)
+	dano_proyectil_rango = maxf(dano, 1.0)
+
+
 func _ready() -> void:
 	super._ready()
 	if is_instance_valid(_sprite):

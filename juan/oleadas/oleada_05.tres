@@ -8,12 +8,16 @@
 [resource]
 script = ExtResource("1_config")
 escena_enemigo = ExtResource("2_enemy")
-escena_enemigo_alternativo = ExtResource("4_enemy_area")
-probabilidad_alternativo = 0.25
+escena_enemigo_alternativo = ExtResource("3_enemy_ranged")
+probabilidad_alternativo = 0.55
+escena_enemigo_terciario = ExtResource("4_enemy_area")
+probabilidad_terciario = 0.15
 nombre = "Última formación"
-cantidad_enemigos = 14
-intervalo_aparicion = 0.65
-rapidez_formacion = 1.6
-intervalo_disparo = 2.2
+cantidad_enemigos = 72
+intervalo_aparicion = 0.2
+rapidez_formacion = 3.2
+intervalo_disparo = 1.25
+velocidad_proyectil_rango = 570.0
+dano_proyectil_rango = 12.0
 puntos_por_enemigo = 150
 pausa_antes_de_la_siguiente = 8.0

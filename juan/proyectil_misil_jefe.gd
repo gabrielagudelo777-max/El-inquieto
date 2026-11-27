@@ -2,7 +2,7 @@ extends Area2D
 
 enum Tipo { TELEDIRIGIDO, BOMBARDEO }
 
-const GIRO_MAXIMO := 2.8
+const GIRO_MAXIMO := 2.2
 const VIDA_TELEDIRIGIDO := 4.5
 const TIEMPO_VUELO_BOMBARDEO := 3.2
 const LADOS_AVISO := 36

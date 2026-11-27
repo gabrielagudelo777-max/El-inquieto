@@ -1,11 +1,11 @@
 extends "res://juan/enemigo_isometrico.gd"
 class_name EnemigoArea
 
-const RADIO_ATAQUE := 150.0
-const TIEMPO_AVISO := 0.9
-const DISTANCIA_ATAQUE := 390.0
-const ENFRIAMIENTO_ATAQUE := 4.5
-const DANO_AREA := 18.0
+const RADIO_ATAQUE := 190.0
+const TIEMPO_AVISO := 0.65
+const DISTANCIA_ATAQUE := 440.0
+const ENFRIAMIENTO_ATAQUE := 2.8
+const DANO_AREA := 28.0
 
 var _enfriamiento_area := 2.0
 var _aviso_restante := 0.0

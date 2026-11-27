@@ -4,17 +4,17 @@ const GOBLIN = preload("res://assets/personajes_nuevos/enemigo_goblin.png")
 const OGRO = preload("res://assets/personajes_nuevos/jefe_ogro.png")
 const MISIL_JEFE = preload("res://juan/proyectil_misil_jefe.tscn")
 const TAMANO_CELDA := 256
-const INTERVALO_MISIL_JEFE := 3.4
+const INTERVALO_MISIL_JEFE := 2.0
 const ALCANCE_MISIL_JEFE := 1900.0
-const VELOCIDAD_MISIL_GUIADO := 500.0
-const VELOCIDAD_MISIL_ASALTO := 330.0
-const DANO_MISIL_GUIADO := 14.0
-const DANO_MISIL_ASALTO := 23.0
-const RADIO_MISIL_ASALTO := 170.0
-const AVISO_MISIL_ASALTO := 0.9
+const VELOCIDAD_MISIL_GUIADO := 650.0
+const VELOCIDAD_MISIL_ASALTO := 420.0
+const DANO_MISIL_GUIADO := 20.0
+const DANO_MISIL_ASALTO := 32.0
+const RADIO_MISIL_ASALTO := 230.0
+const AVISO_MISIL_ASALTO := 0.7
 
 @export var velocidad := 75.0
-@export var integridad := 3
+@export var integridad := 5
 
 var _jugador: CharacterBody2D
 var _director: DirectorCampana
@@ -93,8 +93,8 @@ func _physics_process(delta: float) -> void:
 		_sprite.region_rect = Rect2(_cuadro * TAMANO_CELDA, _fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA)
 	elif _tiempo_ataque <= 0.0:
 		velocity = Vector2.ZERO
-		_jugador.call("recibir_dano", 16.0 if _es_jefe else 10.0)
-		_tiempo_ataque = 0.9
+		_jugador.call("recibir_dano", 24.0 if _es_jefe else 18.0)
+		_tiempo_ataque = 0.55
 
 	if _es_jefe and _enfriamiento_misil_jefe <= 0.0 and distancia <= ALCANCE_MISIL_JEFE:
 		_disparar_misil_jefe()

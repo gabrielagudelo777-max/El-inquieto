@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://es6l10ilgmcl"]
 
-[ext_resource type="Script" path="res://juan/arena_isometrica.gd" id="1"]
+[ext_resource type="Script" uid="uid://cvua0168kgnse" path="res://juan/arena_isometrica.gd" id="1"]
 
-[node name="ArenaIsometrica" type="Node2D"]
+[node name="ArenaIsometrica" type="Node2D" unique_id=1807495807]
 script = ExtResource("1")

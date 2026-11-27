@@ -12,6 +12,10 @@ const PROYECTIL_RANGO = preload("res://juan/proyectil_enemigo_rango.tscn")
 var _enfriamiento_rango := 0.8
 
 
+func _configurar_intervalo_disparo(intervalo: float) -> void:
+	intervalo_disparo_rango = maxf(intervalo, 0.2)
+
+
 func _ready() -> void:
 	super._ready()
 	if is_instance_valid(_sprite):

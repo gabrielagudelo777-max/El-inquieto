@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="OleadaConfig" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="OleadaConfig" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://juan/oleada_config.gd" id="1_config"]
 [ext_resource type="PackedScene" uid="uid://07difqjwrs8x" path="res://juan/enemigo_isometrico.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://juan/enemigo_rango.tscn" id="3_enemy_ranged"]
 
 [resource]
 script = ExtResource("1_config")
@@ -9,5 +10,14 @@ escena_enemigo = ExtResource("2_enemy")
 nombre = "El Asediador"
 es_jefe = true
 cantidad_enemigos = 1
+rapidez_formacion = 1.7
+intervalo_disparo = 2.0
 puntos_por_enemigo = 1000
+integridad_jefe = 28
+escena_refuerzo_cercano = ExtResource("2_enemy")
+escena_refuerzo_distancia = ExtResource("3_enemy_ranged")
+intervalo_refuerzos_jefe = 10.0
+rapidez_refuerzos_jefe = 1.25
+intervalo_disparo_refuerzos_jefe = 3.2
+max_refuerzos_jefe = 4
 pausa_antes_de_la_siguiente = 0.0

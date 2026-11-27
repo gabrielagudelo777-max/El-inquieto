@@ -16,16 +16,16 @@ Primero se completa una partida corta de seis oleadas y un jefe final. La campa�
 
 ## Balance inicial para probar
 
-| Oleada | Apariciones/enemigos | Intervalo de aparición | Rapidez de formación | Intervalo entre disparos enemigos | Puntos | Intermisión |
-|---|---:|---:|---:|---:|---:|---:|
-| 1 | 6 | 0,90 s | 1,20 m/s | 3,00 s | 100 | 5 s |
-| 2 | 8 | 0,80 s | 1,30 m/s | 2,80 s | 100 | 5 s |
-| 3 | 9 | 0,75 s | 1,40 m/s | 2,60 s | 120 | 6 s |
-| 4 | 10 | 0,70 s | 1,50 m/s | 2,40 s | 120 | 6 s |
-| 5 | 12 | 0,65 s | 1,60 m/s | 2,20 s | 150 | 8 s |
-| 6 | Jefe | — | patrón propio | patrón propio | 1000 | — |
+| Oleada | Enemigos | Frecuencia de goblin de rango | Intervalo de aparición | Rapidez | Disparo de rango | Puntos | Intermisión |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 6 | 0 % | 0,90 s | 1,20 | — | 100 | 5 s |
+| 2 | 8 | 20 % | 0,80 s | 1,30 | 2,80 s | 100 | 5 s |
+| 3 | 10 | 30 % | 0,75 s | 1,40 | 2,60 s | 120 | 6 s |
+| 4 | 12 | 40 % | 0,70 s | 1,50 | 2,40 s | 120 | 6 s |
+| 5 | 14 | 50 % | 0,65 s | 1,60 | 2,20 s | 150 | 8 s |
+| 6 | Jefe (28 de vida) | Aparecen ambos refuerzos | — | 1,70 | Refuerzos: 3,20 s | 1000 | — |
 
-Son valores de partida, no de balance final. En las oleadas 1–5 la presión aumenta en pasos pequeños: hay más enemigos, aparecen algo más rápido y disparan con menor intervalo. El jefe tiene comportamiento propio y no se modela como un enemigo común con más puntos. La duración final dependerá del tiempo real de combate, la puntería y los patrones; se medirá en pruebas antes de prometer un tiempo de campaña.
+Son valores de partida, no de balance final. En las oleadas 1–5 sube gradualmente la cantidad, la rapidez y la proporción de enemigos de rango. El intervalo de disparo se aplica al goblin de rango y se acorta por oleada. Durante el jefe aparece una pareja inicial de goblins (uno cercano y uno de rango); después puede llegar otra pareja cada 10 s, hasta cuatro refuerzos activos. Los refuerzos no adelantan la derrota del jefe ni prolongan la oleada una vez derrotado. El jefe conserva por ahora su ataque de contacto; su ataque a distancia se agregará en una etapa posterior. La duración final dependerá del tiempo real de combate y se medirá en pruebas.
 
 ## Responsabilidad de Juan
 

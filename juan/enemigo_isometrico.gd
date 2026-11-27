@@ -17,14 +17,25 @@ var _sprite: Sprite2D
 var _tiempo_animacion := 0.0
 var _cuadro := 0
 var _fila := 0
+var _cuenta_para_oleada := true
 
 
-func configurar(rapidez: float, puntos: int, jefe: bool) -> void:
+func configurar(
+	rapidez: float,
+	puntos: int,
+	jefe: bool,
+	cuenta_para_oleada: bool = true,
+	vida_jefe: int = 18,
+	intervalo_disparo_rango: float = 1.8
+) -> void:
 	velocidad = rapidez * 42.0
 	_puntos = puntos
 	_es_jefe = jefe
+	_cuenta_para_oleada = cuenta_para_oleada
 	if jefe:
-		integridad = 18
+		integridad = vida_jefe
+	if has_method("_configurar_intervalo_disparo"):
+		call("_configurar_intervalo_disparo", intervalo_disparo_rango)
 
 
 func _ready() -> void:
@@ -71,7 +82,7 @@ func recibir_dano(cantidad: int = 1) -> void:
 	destello.tween_property(self, "modulate", Color.WHITE, 0.12)
 	if integridad <= 0:
 		_derrotado = true
-		if is_instance_valid(_director):
+		if is_instance_valid(_director) and _cuenta_para_oleada:
 			_director.registrar_enemigo_derrotado(_puntos, _es_jefe)
 		queue_free()
 

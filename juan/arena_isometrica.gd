@@ -44,9 +44,11 @@ var _jugador: CharacterBody2D
 var _camara: Camera2D
 var _director: DirectorCampana
 var _configuracion: OleadaConfig
+var _jefe_actual: CharacterBody2D
 var _mejora_aplicada := false
 var _enemigos_restantes := 0
 var _reloj_aparicion := 0.0
+var _reloj_refuerzos_jefe := 0.0
 var _indice_sala := 0
 var _puntaje: Label
 var _tiempo_hud: Label
@@ -96,6 +98,18 @@ func _process(delta: float) -> void:
 			_aparecer_enemigo()
 			_enemigos_restantes -= 1
 			_reloj_aparicion = _configuracion.intervalo_aparicion
+
+	if (
+		_director != null
+		and _director.estado == DirectorCampana.Estado.COMBATE
+		and _configuracion != null
+		and _configuracion.es_jefe
+		and is_instance_valid(_jefe_actual)
+	):
+		_reloj_refuerzos_jefe -= delta
+		if _reloj_refuerzos_jefe <= 0.0:
+			_crear_refuerzos_jefe()
+			_reloj_refuerzos_jefe = _configuracion.intervalo_refuerzos_jefe
 	_actualizar_hud()
 
 
@@ -479,6 +493,8 @@ func _iniciar_oleada(indice: int, configuracion: OleadaConfig) -> void:
 
 	_indice_sala = indice - 1
 	_configuracion = configuracion
+	_jefe_actual = null
+	_reloj_refuerzos_jefe = 0.0
 	_enemigos_restantes = configuracion.cantidad_enemigos
 	_reloj_aparicion = 0.0
 	_pintar_sala()
@@ -491,11 +507,25 @@ func _iniciar_oleada(indice: int, configuracion: OleadaConfig) -> void:
 		_oleada.text = "%s  %02d / %02d" % [tipo, indice, OLEADAS.size()]
 
 
-func _aparecer_enemigo() -> void:
+func _aparecer_enemigo(
+	escena_forzada: PackedScene = null,
+	contar_para_oleada: bool = true,
+	es_refuerzo: bool = false
+) -> void:
 	var enemigo: CharacterBody2D
+	var escena := escena_forzada
+	var es_jefe := false
+	if escena == null:
+		escena = _configuracion.escena_enemigo
+		es_jefe = _configuracion.es_jefe
+		if (
+			_configuracion.escena_enemigo_alternativo != null
+			and randf() < _configuracion.probabilidad_alternativo
+		):
+			escena = _configuracion.escena_enemigo_alternativo
 
-	if _configuracion.escena_enemigo != null:
-		enemigo = _configuracion.escena_enemigo.instantiate() as CharacterBody2D
+	if escena != null:
+		enemigo = escena.instantiate() as CharacterBody2D
 
 	if enemigo == null or not enemigo.has_method("configurar"):
 		push_error(
@@ -509,12 +539,16 @@ func _aparecer_enemigo() -> void:
 		enemigo = CharacterBody2D.new()
 		enemigo.set_script(SCRIPT_ENEMIGO)
 
-	enemigo.name = "Amenaza_%02d" % get_tree().get_nodes_in_group("enemigos").size()
+	var prefijo := "RefuerzoJefe" if es_refuerzo else "Amenaza"
+	enemigo.name = "%s_%02d" % [prefijo, get_tree().get_nodes_in_group("enemigos").size()]
 	enemigo.call(
 		"configurar",
-		_configuracion.rapidez_formacion,
-		_configuracion.puntos_por_enemigo,
-		_configuracion.es_jefe
+		_configuracion.rapidez_refuerzos_jefe if es_refuerzo else _configuracion.rapidez_formacion,
+		_configuracion.puntos_por_enemigo if contar_para_oleada else 0,
+		es_jefe,
+		contar_para_oleada,
+		_configuracion.integridad_jefe,
+		_configuracion.intervalo_disparo_refuerzos_jefe if es_refuerzo else _configuracion.intervalo_disparo
 	)
 
 	var borde := randi_range(0, 3)
@@ -529,9 +563,41 @@ func _aparecer_enemigo() -> void:
 			enemigo.position = Vector2(1450, randf_range(-140, 140))
 
 	if _configuracion.es_jefe:
-		enemigo.scale = Vector2(1.7, 1.7)
+		if es_jefe:
+			enemigo.scale = Vector2(1.7, 1.7)
 
 	_entidades.add_child(enemigo)
+	if es_refuerzo:
+		enemigo.add_to_group("refuerzos_jefe")
+	if es_jefe:
+		_jefe_actual = enemigo
+		_jefe_actual.tree_exiting.connect(_al_jefe_derrotado)
+		_reloj_refuerzos_jefe = _configuracion.intervalo_refuerzos_jefe
+		_crear_refuerzos_jefe()
+
+
+func _crear_refuerzos_jefe() -> void:
+	if not is_instance_valid(_jefe_actual):
+		return
+
+	var grupos := [
+		_configuracion.escena_refuerzo_cercano,
+		_configuracion.escena_refuerzo_distancia,
+	]
+	for escena in grupos:
+		if escena == null:
+			continue
+		if get_tree().get_nodes_in_group("refuerzos_jefe").size() >= _configuracion.max_refuerzos_jefe:
+			break
+		_aparecer_enemigo(escena, false, true)
+
+
+func _al_jefe_derrotado() -> void:
+	_jefe_actual = null
+	_reloj_refuerzos_jefe = 0.0
+	for refuerzo in get_tree().get_nodes_in_group("refuerzos_jefe"):
+		if is_instance_valid(refuerzo):
+			refuerzo.queue_free()
 
 
 func _crear_camara() -> void:

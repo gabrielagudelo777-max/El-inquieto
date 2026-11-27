@@ -1,13 +1,16 @@
-[gd_resource type="Resource" script_class="OleadaConfig" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="OleadaConfig" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://juan/oleada_config.gd" id="1_config"]
 [ext_resource type="PackedScene" uid="uid://07difqjwrs8x" path="res://juan/enemigo_isometrico.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://juan/enemigo_rango.tscn" id="3_enemy_ranged"]
 
 [resource]
 script = ExtResource("1_config")
 escena_enemigo = ExtResource("2_enemy")
+escena_enemigo_alternativo = ExtResource("3_enemy_ranged")
+probabilidad_alternativo = 0.3
 nombre = "Fuego cruzado"
-cantidad_enemigos = 9
+cantidad_enemigos = 10
 intervalo_aparicion = 0.75
 rapidez_formacion = 1.4
 intervalo_disparo = 2.6
